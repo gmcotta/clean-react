@@ -7,9 +7,9 @@ import Styles from './form-status-styles.scss'
 const FormStatus: FC = () => {
   const { state } = useContext(FormContext)
   return (
-    <div aria-label='Status do formulário' className={Styles.errorWrap}>
+    <div aria-label='form-status' className={Styles.errorWrap}>
       {state.isLoading && <Spinner className={Styles.spinner} />}
-      {state.mainError && <span className={Styles.error}>{state.mainError}</span>}
+      {state.mainError && <span aria-label='main-error' className={Styles.error}>{state.mainError}</span>}
     </div>
   )
 }
