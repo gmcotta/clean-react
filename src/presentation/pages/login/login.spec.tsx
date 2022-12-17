@@ -14,4 +14,13 @@ describe('<Login />', () => {
     const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
     expect(submitButton.disabled).toBe(true)
   })
+
+  it('Should render input status errors on start', () => {
+    render(<Login />)
+    // screen.logTestingPlaygroundURL()
+    const emailErrorStatus = screen.getByLabelText(/email-error-status/i)
+    const passwordErrorStatus = screen.getByLabelText(/password-error-status/i)
+    expect(emailErrorStatus.title).toBe('Campo obrigatório')
+    expect(passwordErrorStatus.title).toBe('Campo obrigatório')
+  })
 })
