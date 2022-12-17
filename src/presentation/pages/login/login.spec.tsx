@@ -23,6 +23,29 @@ const makeSut = (params?: SutParams): SutTypes => {
   }
 }
 
+const populateEmailField = (email = faker.internet.email()): void => {
+  const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
+  fireEvent.input(emailInput, { target: { value: email } })
+}
+
+const populatePasswordField = (password = faker.internet.password()): void => {
+  const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
+  fireEvent.input(passwordInput, { target: { value: password } })
+}
+
+const simulateValidSubmit = (email = faker.internet.email(), password = faker.internet.password()): void => {
+  populateEmailField(email)
+  populatePasswordField(password)
+  const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
+  fireEvent.click(submitButton)
+}
+
+const simulateErrorStatus = (fieldName: string, errorMessage: string, statusEmoji: string): void => {
+  const passwordErrorStatus = screen.getByLabelText(`${fieldName}-error-status`)
+  expect(passwordErrorStatus.title).toBe(errorMessage)
+  expect(passwordErrorStatus.textContent).toBe(statusEmoji)
+}
+
 describe('<Login />', () => {
   describe('start', () => {
     it('Should not render spinner and error message on start', () => {
@@ -51,59 +74,40 @@ describe('<Login />', () => {
     it('Should show email error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
-      fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
-      const emailErrorStatus = screen.getByLabelText(/email-error-status/i)
-      expect(emailErrorStatus.title).toBe(errorMessage)
-      expect(emailErrorStatus.textContent).toBe('🔴')
+      populateEmailField()
+      simulateErrorStatus('email', errorMessage, '🔴')
     })
 
     it('Should show password error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
-      fireEvent.input(passwordInput, { target: { value: faker.internet.password() } })
-      const passwordErrorStatus = screen.getByLabelText(/password-error-status/i)
-      expect(passwordErrorStatus.title).toBe(errorMessage)
-      expect(passwordErrorStatus.textContent).toBe('🔴')
+      populatePasswordField()
+      simulateErrorStatus('password', errorMessage, '🔴')
     })
 
     it('Should show valid email state if Validation succeeds', () => {
       makeSut()
-      const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
-      fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
-      const emailErrorStatus = screen.getByLabelText(/email-error-status/i)
-      expect(emailErrorStatus.title).toBe('Tudo certo!')
-      expect(emailErrorStatus.textContent).toBe('🟢')
+      populateEmailField()
+      simulateErrorStatus('email', 'Tudo certo!', '🟢')
     })
 
     it('Should show valid password state if Validation succeeds', () => {
       makeSut()
-      const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
-      fireEvent.input(passwordInput, { target: { value: faker.internet.password() } })
-      const passwordErrorStatus = screen.getByLabelText(/password-error-status/i)
-      expect(passwordErrorStatus.title).toBe('Tudo certo!')
-      expect(passwordErrorStatus.textContent).toBe('🟢')
+      populatePasswordField()
+      simulateErrorStatus('password', 'Tudo certo!', '🟢')
     })
 
     it('Should enable submit button if Validation succeeds', () => {
       makeSut()
-      const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
-      fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
-      const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
-      fireEvent.input(passwordInput, { target: { value: faker.internet.password() } })
+      populateEmailField()
+      populatePasswordField()
       const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
       expect(submitButton.disabled).toBe(false)
     })
 
     it('Should show spinner on submit', () => {
       makeSut()
-      const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
-      fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
-      const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
-      fireEvent.input(passwordInput, { target: { value: faker.internet.password() } })
-      const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
-      fireEvent.click(submitButton)
+      simulateValidSubmit()
       const spinner = screen.getByLabelText(/spinner/i)
       expect(spinner).toBeTruthy()
     })
@@ -113,13 +117,8 @@ describe('<Login />', () => {
     it('Should call Authentication with correct values', () => {
       const { authenticationSpy } = makeSut()
       const email = faker.internet.email()
-      const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
-      fireEvent.input(emailInput, { target: { value: email } })
       const password = faker.internet.password()
-      const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
-      fireEvent.input(passwordInput, { target: { value: password } })
-      const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
-      fireEvent.click(submitButton)
+      simulateValidSubmit(email, password)
       expect(authenticationSpy.params).toEqual({ email, password })
     })
   })
