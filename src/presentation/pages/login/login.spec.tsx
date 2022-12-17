@@ -60,14 +60,14 @@ describe('<Login />', () => {
       expect(passwordErrorStatus.textContent).toBe('🔴')
     })
 
-    it.skip('Should show valid email state if Validation succeeds', () => {
+    it('Should show valid email state if Validation succeeds', () => {
       const { validationStub } = makeSut()
-      const errorMessage = validationStub.errorMessage
+      validationStub.errorMessage = null
       const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
       fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
       const emailErrorStatus = screen.getByLabelText(/email-error-status/i)
-      expect(emailErrorStatus.title).toBe(errorMessage)
-      expect(emailErrorStatus.textContent).toBe('🔴')
+      expect(emailErrorStatus.title).toBe('Tudo certo!')
+      expect(emailErrorStatus.textContent).toBe('🟢')
     })
 
     it('Should show valid password state if Validation succeeds', () => {
