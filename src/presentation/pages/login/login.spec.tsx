@@ -51,4 +51,11 @@ describe('<Login />', () => {
     fireEvent.input(emailInput, { target: { value: 'any_email' } })
     expect(validationSpy.input).toEqual({ email: 'any_email' })
   })
+
+  it('Should call Validation with correct password value', () => {
+    const { validationSpy } = makeSut()
+    const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
+    fireEvent.input(passwordInput, { target: { value: 'any_password' } })
+    expect(validationSpy.input).toEqual({ password: 'any_password' })
+  })
 })
