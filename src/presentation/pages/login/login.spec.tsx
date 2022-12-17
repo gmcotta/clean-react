@@ -5,15 +5,14 @@ import { faker } from '@faker-js/faker'
 import { ValidationStub } from '@/presentation/test'
 import Login from './login'
 
-type SutTypes = {
-  validationStub: ValidationStub
+type SutParams = {
+  errorMessage: string
 }
 
-const makeSut = (): SutTypes => {
+const makeSut = (params?: SutParams): void => {
   const validationStub = new ValidationStub()
-  validationStub.errorMessage = faker.random.words()
+  validationStub.errorMessage = params?.errorMessage
   render(<Login validation={validationStub} />)
-  return { validationStub }
 }
 
 describe('<Login />', () => {
@@ -25,24 +24,25 @@ describe('<Login />', () => {
     })
 
     it('Should render button disabled on start', () => {
-      makeSut()
+      makeSut({ errorMessage: faker.random.words() })
       const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
       expect(submitButton.disabled).toBe(true)
     })
 
     it('Should render input status errors on start', () => {
-      const { validationStub } = makeSut()
+      const errorMessage = faker.random.words()
+      makeSut({ errorMessage })
       const emailErrorStatus = screen.getByLabelText(/email-error-status/i)
       const passwordErrorStatus = screen.getByLabelText(/password-error-status/i)
-      expect(emailErrorStatus.title).toBe(validationStub.errorMessage)
-      expect(passwordErrorStatus.title).toBe(validationStub.errorMessage)
+      expect(emailErrorStatus.title).toBe(errorMessage)
+      expect(passwordErrorStatus.title).toBe(errorMessage)
     })
   })
 
   describe('Validation', () => {
     it('Should show email error if Validation fails', () => {
-      const { validationStub } = makeSut()
-      const errorMessage = validationStub.errorMessage
+      const errorMessage = faker.random.words()
+      makeSut({ errorMessage })
       const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
       fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
       const emailErrorStatus = screen.getByLabelText(/email-error-status/i)
@@ -51,8 +51,8 @@ describe('<Login />', () => {
     })
 
     it('Should show password error if Validation fails', () => {
-      const { validationStub } = makeSut()
-      const errorMessage = validationStub.errorMessage
+      const errorMessage = faker.random.words()
+      makeSut({ errorMessage })
       const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
       fireEvent.input(passwordInput, { target: { value: faker.internet.password() } })
       const passwordErrorStatus = screen.getByLabelText(/password-error-status/i)
@@ -61,8 +61,7 @@ describe('<Login />', () => {
     })
 
     it('Should show valid email state if Validation succeeds', () => {
-      const { validationStub } = makeSut()
-      validationStub.errorMessage = null
+      makeSut()
       const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
       fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
       const emailErrorStatus = screen.getByLabelText(/email-error-status/i)
@@ -71,8 +70,7 @@ describe('<Login />', () => {
     })
 
     it('Should show valid password state if Validation succeeds', () => {
-      const { validationStub } = makeSut()
-      validationStub.errorMessage = null
+      makeSut()
       const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
       fireEvent.input(passwordInput, { target: { value: faker.internet.password() } })
       const passwordErrorStatus = screen.getByLabelText(/password-error-status/i)
@@ -81,8 +79,7 @@ describe('<Login />', () => {
     })
 
     it('Should enable submit button if Validation succeeds', () => {
-      const { validationStub } = makeSut()
-      validationStub.errorMessage = null
+      makeSut()
       const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
       fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
       const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
