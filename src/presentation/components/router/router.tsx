@@ -7,7 +7,7 @@ const Router: FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login validation={ { validate: () => '' } } />} />
       </Routes>
     </BrowserRouter>
   )
