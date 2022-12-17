@@ -18,6 +18,7 @@ type SutParams = {
 }
 
 const history = createMemoryHistory({ initialEntries: ['/login'] })
+
 const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
   const authenticationSpy = new AuthenticationSpy()
@@ -49,10 +50,30 @@ const simulateValidSubmit = (email = faker.internet.email(), password = faker.in
   fireEvent.click(submitButton)
 }
 
-const simulateErrorStatus = (fieldName: string, errorMessage: string, statusEmoji: string): void => {
+const testErrorStatus = (fieldName: string, errorMessage: string, statusEmoji: string): void => {
   const passwordErrorStatus = screen.getByLabelText(`${fieldName}-error-status`)
   expect(passwordErrorStatus.title).toBe(errorMessage)
   expect(passwordErrorStatus.textContent).toBe(statusEmoji)
+}
+
+const testErrorWrapChildCount = (count: number): void => {
+  const errorWrap = screen.getByLabelText('form-status')
+  expect(errorWrap.childElementCount).toBe(count)
+}
+
+const testElementTitle = (labelText: string, message: string): void => {
+  const emailErrorStatus = screen.getByLabelText(labelText)
+  expect(emailErrorStatus.title).toBe(message)
+}
+
+const testButtonIsDisabled = (buttonText: string, isDisabled = true): void => {
+  const button = screen.getByRole<HTMLButtonElement>('button', { name: buttonText })
+  expect(button.disabled).toBe(isDisabled)
+}
+
+const testElementExists = (labelText: string): void => {
+  const element = screen.getByLabelText(labelText)
+  expect(element).toBeTruthy()
 }
 
 describe('<Login />', () => {
@@ -63,23 +84,19 @@ describe('<Login />', () => {
   describe('start', () => {
     it('Should not render spinner and error message on start', () => {
       makeSut()
-      const errorWrap = screen.getByLabelText('form-status')
-      expect(errorWrap.childElementCount).toBe(0)
+      testErrorWrapChildCount(0)
     })
 
     it('Should render button disabled on start', () => {
       makeSut({ errorMessage: faker.random.words() })
-      const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
-      expect(submitButton.disabled).toBe(true)
+      testButtonIsDisabled('Entrar')
     })
 
     it('Should render input status errors on start', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      const emailErrorStatus = screen.getByLabelText(/email-error-status/i)
-      const passwordErrorStatus = screen.getByLabelText(/password-error-status/i)
-      expect(emailErrorStatus.title).toBe(errorMessage)
-      expect(passwordErrorStatus.title).toBe(errorMessage)
+      testElementTitle('email-error-status', errorMessage)
+      testElementTitle('password-error-status', errorMessage)
     })
   })
 
@@ -88,41 +105,39 @@ describe('<Login />', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
       populateEmailField()
-      simulateErrorStatus('email', errorMessage, '🔴')
+      testErrorStatus('email', errorMessage, '🔴')
     })
 
     it('Should show password error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
       populatePasswordField()
-      simulateErrorStatus('password', errorMessage, '🔴')
+      testErrorStatus('password', errorMessage, '🔴')
     })
 
     it('Should show valid email state if Validation succeeds', () => {
       makeSut()
       populateEmailField()
-      simulateErrorStatus('email', 'Tudo certo!', '🟢')
+      testErrorStatus('email', 'Tudo certo!', '🟢')
     })
 
     it('Should show valid password state if Validation succeeds', () => {
       makeSut()
       populatePasswordField()
-      simulateErrorStatus('password', 'Tudo certo!', '🟢')
+      testErrorStatus('password', 'Tudo certo!', '🟢')
     })
 
     it('Should enable submit button if Validation succeeds', () => {
       makeSut()
       populateEmailField()
       populatePasswordField()
-      const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
-      expect(submitButton.disabled).toBe(false)
+      testButtonIsDisabled('Entrar', false)
     })
 
     it('Should show spinner on submit', () => {
       makeSut()
       simulateValidSubmit()
-      const spinner = screen.getByLabelText(/spinner/i)
-      expect(spinner).toBeTruthy()
+      testElementExists('spinner')
     })
   })
 
@@ -158,10 +173,9 @@ describe('<Login />', () => {
         .mockRejectedValueOnce(error)
       simulateValidSubmit()
       await waitFor(async () => {
-        const errorWrap = screen.getByLabelText('form-status')
         const mainError = await screen.findByLabelText(/main-error/i)
         expect(mainError.textContent).toBe(error.message)
-        expect(errorWrap.childElementCount).toBe(1)
+        testErrorWrapChildCount(1)
       })
     })
 
@@ -169,11 +183,10 @@ describe('<Login />', () => {
       const { authenticationSpy } = makeSut()
       simulateValidSubmit()
       await waitFor(() => {
-        screen.getByRole('form')
+        expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
+        expect(history.index).toBe(0)
+        expect(history.location.pathname).toBe('/')
       })
-      expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
-      expect(history.index).toBe(0)
-      expect(history.location.pathname).toBe('/')
     })
 
     it('Should go to sign up page', () => {
