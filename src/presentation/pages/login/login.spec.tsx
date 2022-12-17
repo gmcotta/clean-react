@@ -59,5 +59,25 @@ describe('<Login />', () => {
       expect(passwordErrorStatus.title).toBe(errorMessage)
       expect(passwordErrorStatus.textContent).toBe('🔴')
     })
+
+    it.skip('Should show valid email state if Validation succeeds', () => {
+      const { validationStub } = makeSut()
+      const errorMessage = validationStub.errorMessage
+      const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
+      fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
+      const emailErrorStatus = screen.getByLabelText(/email-error-status/i)
+      expect(emailErrorStatus.title).toBe(errorMessage)
+      expect(emailErrorStatus.textContent).toBe('🔴')
+    })
+
+    it('Should show valid password state if Validation succeeds', () => {
+      const { validationStub } = makeSut()
+      validationStub.errorMessage = null
+      const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
+      fireEvent.input(passwordInput, { target: { value: faker.internet.password() } })
+      const passwordErrorStatus = screen.getByLabelText(/password-error-status/i)
+      expect(passwordErrorStatus.title).toBe('Tudo certo!')
+      expect(passwordErrorStatus.textContent).toBe('🟢')
+    })
   })
 })
