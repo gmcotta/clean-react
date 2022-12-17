@@ -8,4 +8,10 @@ describe('<Login />', () => {
     const errorWrap = screen.getByLabelText('Status do formulário')
     expect(errorWrap.childElementCount).toBe(0)
   })
+
+  it('Should render button disabled on start', () => {
+    render(<Login />)
+    const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
+    expect(submitButton.disabled).toBe(true)
+  })
 })
