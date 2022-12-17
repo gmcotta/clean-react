@@ -1,9 +1,10 @@
 import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
 
 import { AuthenticationSpy, ValidationStub } from '@/presentation/test'
 import Login from './login'
+import { InvalidCredentialsError } from '@/domain/errors'
 
 type SutTypes = {
   authenticationSpy: AuthenticationSpy
@@ -50,7 +51,7 @@ describe('<Login />', () => {
   describe('start', () => {
     it('Should not render spinner and error message on start', () => {
       makeSut()
-      const errorWrap = screen.getByLabelText('Status do formulário')
+      const errorWrap = screen.getByLabelText('form-status')
       expect(errorWrap.childElementCount).toBe(0)
     })
 
@@ -133,9 +134,23 @@ describe('<Login />', () => {
       const errorMessage = faker.random.words()
       const { authenticationSpy } = makeSut({ errorMessage })
       populateEmailField()
-      // screen.logTestingPlaygroundURL()
       fireEvent.submit(screen.getByRole('form'))
       expect(authenticationSpy.callsCount).toBe(0)
+    })
+
+    it('Should show error if Authentication fails', async () => {
+      const { authenticationSpy } = makeSut()
+      const error = new InvalidCredentialsError()
+      jest
+        .spyOn(authenticationSpy, 'auth')
+        .mockRejectedValueOnce(error)
+      simulateValidSubmit()
+      await waitFor(async () => {
+        const errorWrap = screen.getByLabelText('form-status')
+        const mainError = await screen.findByLabelText(/main-error/i)
+        expect(mainError.textContent).toBe(error.message)
+        expect(errorWrap.childElementCount).toBe(1)
+      })
     })
   })
 })
