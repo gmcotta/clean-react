@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
+import 'jest-localstorage-mock'
 
 import { AuthenticationSpy, ValidationStub } from '@/presentation/test'
 import Login from './login'
@@ -48,6 +49,10 @@ const simulateErrorStatus = (fieldName: string, errorMessage: string, statusEmoj
 }
 
 describe('<Login />', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
   describe('start', () => {
     it('Should not render spinner and error message on start', () => {
       makeSut()
@@ -151,6 +156,15 @@ describe('<Login />', () => {
         expect(mainError.textContent).toBe(error.message)
         expect(errorWrap.childElementCount).toBe(1)
       })
+    })
+
+    it('Should add accessToken to localStorage', async () => {
+      const { authenticationSpy } = makeSut()
+      simulateValidSubmit()
+      await waitFor(() => {
+        screen.getByRole('form')
+      })
+      expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
     })
   })
 })
