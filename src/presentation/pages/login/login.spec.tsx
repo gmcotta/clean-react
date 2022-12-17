@@ -4,15 +4,36 @@ import { faker } from '@faker-js/faker'
 
 import { ValidationStub } from '@/presentation/test'
 import Login from './login'
+import { Authentication, AuthenticationParams } from '@/domain/usecases'
+import { AccountModel } from '@/domain/models'
+import { mockAccountModel } from '@/domain/test'
+
+class AuthenticationSpy implements Authentication {
+  account = mockAccountModel()
+  params: AuthenticationParams
+
+  async auth (params: AuthenticationParams): Promise<AccountModel> {
+    this.params = params
+    return await Promise.resolve(this.account)
+  }
+}
+
+type SutTypes = {
+  authenticationSpy: AuthenticationSpy
+}
 
 type SutParams = {
   errorMessage: string
 }
 
-const makeSut = (params?: SutParams): void => {
+const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
+  const authenticationSpy = new AuthenticationSpy()
   validationStub.errorMessage = params?.errorMessage
-  render(<Login validation={validationStub} />)
+  render(<Login validation={validationStub} authentication={authenticationSpy} />)
+  return {
+    authenticationSpy
+  }
 }
 
 describe('<Login />', () => {
@@ -98,6 +119,21 @@ describe('<Login />', () => {
       fireEvent.click(submitButton)
       const spinner = screen.getByLabelText(/spinner/i)
       expect(spinner).toBeTruthy()
+    })
+  })
+
+  describe('Authentication', () => {
+    it('Should call Authentication with correct values', () => {
+      const { authenticationSpy } = makeSut()
+      const email = faker.internet.email()
+      const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
+      fireEvent.input(emailInput, { target: { value: email } })
+      const password = faker.internet.password()
+      const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
+      fireEvent.input(passwordInput, { target: { value: password } })
+      const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
+      fireEvent.click(submitButton)
+      expect(authenticationSpy.params).toEqual({ email, password })
     })
   })
 })
