@@ -87,5 +87,17 @@ describe('<Login />', () => {
       const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
       expect(submitButton.disabled).toBe(false)
     })
+
+    it('Should show spinner on submit', () => {
+      makeSut()
+      const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
+      fireEvent.input(emailInput, { target: { value: faker.internet.email() } })
+      const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
+      fireEvent.input(passwordInput, { target: { value: faker.internet.password() } })
+      const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
+      fireEvent.click(submitButton)
+      const spinner = screen.getByLabelText(/spinner/i)
+      expect(spinner).toBeTruthy()
+    })
   })
 })
