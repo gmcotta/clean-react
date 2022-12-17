@@ -5,11 +5,11 @@ import FormContext from '@/presentation/contexts/form/form-context'
 import Styles from './form-status-styles.scss'
 
 const FormStatus: FC = () => {
-  const { isLoading, errorMessage } = useContext(FormContext)
+  const { state, errorState } = useContext(FormContext)
   return (
     <div aria-label='Status do formulário' className={Styles.errorWrap}>
-      {isLoading && <Spinner className={Styles.spinner} />}
-      {errorMessage && <span className={Styles.error}>{errorMessage}</span>}
+      {state.isLoading && <Spinner className={Styles.spinner} />}
+      {errorState.mainError && <span className={Styles.error}>{errorState.mainError}</span>}
     </div>
   )
 }
