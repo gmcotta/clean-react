@@ -25,6 +25,7 @@ const Input: FC<InputProps> = (props) => {
 
   const getStatus = (): string => {
     return '🔴'
+    // '🟢'
   }
 
   const getTitle = (): string => {
