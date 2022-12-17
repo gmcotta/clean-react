@@ -128,5 +128,14 @@ describe('<Login />', () => {
       simulateValidSubmit()
       expect(authenticationSpy.callsCount).toBe(1)
     })
+
+    it('Should not call Authentication if form is invalid', () => {
+      const errorMessage = faker.random.words()
+      const { authenticationSpy } = makeSut({ errorMessage })
+      populateEmailField()
+      // screen.logTestingPlaygroundURL()
+      fireEvent.submit(screen.getByRole('form'))
+      expect(authenticationSpy.callsCount).toBe(0)
+    })
   })
 })
