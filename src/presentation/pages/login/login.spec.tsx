@@ -172,9 +172,11 @@ describe('<Login />', () => {
         screen.getByRole('form')
       })
       expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
+      expect(history.index).toBe(0)
+      expect(history.location.pathname).toBe('/')
     })
 
-    it.only('Should go to sign up page', () => {
+    it('Should go to sign up page', () => {
       makeSut()
       const signUp = screen.getByText(/criar conta/i)
       fireEvent.click(signUp)
