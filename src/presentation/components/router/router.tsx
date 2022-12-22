@@ -1,18 +1,15 @@
 import React, { FC } from 'react'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 
-import { Login } from '@/presentation/pages'
+type RouterProps = {
+  Login: FC
+}
 
-const Router: FC = () => {
+const Router: FC<RouterProps> = ({ Login }) => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={
-          <Login
-            validation={ { validate: () => '' } }
-            authentication={{ auth: async () => await Promise.resolve({ accessToken: '' }) }}
-          />
-        }/>
+        <Route path="/login" element={<Login />}/>
         <Route path="/signup" element={<div>Sign up</div>} />
       </Routes>
     </BrowserRouter>
