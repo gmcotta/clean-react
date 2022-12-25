@@ -3,11 +3,10 @@ import { Router } from 'react-router-dom'
 import { createMemoryHistory } from '@remix-run/router'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
-import 'jest-localstorage-mock'
 
 import { AuthenticationSpy, ValidationStub } from '@/presentation/test'
-import Login from './login'
 import { InvalidCredentialsError } from '@/domain/errors'
+import Login from './login'
 
 type SutTypes = {
   authenticationSpy: AuthenticationSpy
