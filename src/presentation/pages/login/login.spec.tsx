@@ -192,6 +192,18 @@ describe('<Login />', () => {
       })
     })
 
+    it('Should present error if SaveAccessToken fails', async () => {
+      const { saveAccessTokenMock } = makeSut()
+      const error = new InvalidCredentialsError()
+      jest.spyOn(saveAccessTokenMock, 'save').mockRejectedValueOnce(error)
+      simulateValidSubmit()
+      await waitFor(async () => {
+        const mainError = await screen.findByLabelText(/main-error/i)
+        expect(mainError.textContent).toBe(error.message)
+        testErrorWrapChildCount(1)
+      })
+    })
+
     it('Should go to sign up page', () => {
       makeSut()
       const signUp = screen.getByText(/criar conta/i)
