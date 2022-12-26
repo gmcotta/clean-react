@@ -1,7 +1,7 @@
 import React from 'react'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from '@remix-run/router'
-import { render } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
 
 import { FormHelper, ValidationStub } from '@/presentation/test'
@@ -23,6 +23,20 @@ const makeSut = (params?: SutParams): void => {
       <Signup validation={validationStub} />
     </Router>
   )
+}
+
+const simulateValidSubmit = (name = faker.name.fullName(), email = faker.internet.email(), password = faker.internet.password()): void => {
+  FormHelper.populateField('Digite seu nome', name)
+  FormHelper.populateField('Digite seu e-mail', email)
+  FormHelper.populateField('Digite sua senha', password)
+  FormHelper.populateField('Confirme sua senha', password)
+  const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
+  fireEvent.click(submitButton)
+}
+
+const testElementExists = (labelText: string): void => {
+  const element = screen.getByLabelText(labelText)
+  expect(element).toBeTruthy()
 }
 
 describe('<Signup />', () => {
@@ -109,6 +123,12 @@ describe('<Signup />', () => {
       FormHelper.populateField('Digite sua senha', faker.internet.password())
       FormHelper.populateField('Confirme sua senha', faker.internet.password())
       FormHelper.testButtonIsDisabled('Entrar', false)
+    })
+
+    it('Should show spinner on submit', () => {
+      makeSut()
+      simulateValidSubmit()
+      testElementExists('spinner')
     })
   })
 })
