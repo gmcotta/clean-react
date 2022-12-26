@@ -152,11 +152,19 @@ describe('<Signup />', () => {
       })
     })
 
-    it('Shoul call AddAccount only once', () => {
+    it('Should call AddAccount only once', () => {
       const { addAccountSpy } = makeSut()
       simulateValidSubmit()
       simulateValidSubmit()
       expect(addAccountSpy.callsCount).toBe(1)
+    })
+
+    it('Should not call AddAccount if form is invalid', () => {
+      const errorMessage = faker.random.words()
+      const { addAccountSpy } = makeSut({ errorMessage })
+      FormHelper.populateField('Digite seu e-mail', faker.internet.email())
+      fireEvent.submit(screen.getByRole('form'))
+      expect(addAccountSpy.callsCount).toBe(0)
     })
   })
 })
