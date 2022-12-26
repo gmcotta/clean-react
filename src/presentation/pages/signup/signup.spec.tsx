@@ -45,7 +45,7 @@ describe('<Signup />', () => {
       FormHelper.testElementTitle('name-error-status', errorMessage)
       FormHelper.testElementTitle('email-error-status', errorMessage)
       FormHelper.testElementTitle('password-error-status', errorMessage)
-      FormHelper.testElementTitle('passwordConfirmation-error-status', 'Campo obrigatório')
+      FormHelper.testElementTitle('passwordConfirmation-error-status', errorMessage)
     })
   })
 
@@ -69,6 +69,13 @@ describe('<Signup />', () => {
       makeSut({ errorMessage })
       FormHelper.populateField('Digite sua senha', faker.internet.password())
       FormHelper.testErrorStatus('password', errorMessage, '🔴')
+    })
+
+    it('Should show passwordConfirmation error if Validation fails', () => {
+      const errorMessage = faker.random.words()
+      makeSut({ errorMessage })
+      FormHelper.populateField('Confirme sua senha', faker.internet.password())
+      FormHelper.testErrorStatus('passwordConfirmation', errorMessage, '🔴')
     })
   })
 })
