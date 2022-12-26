@@ -40,27 +40,11 @@ const makeSut = (params?: SutParams): SutTypes => {
   }
 }
 
-const populateEmailField = (email = faker.internet.email()): void => {
-  const emailInput = screen.getByPlaceholderText(/digite seu e-mail/i)
-  fireEvent.input(emailInput, { target: { value: email } })
-}
-
-const populatePasswordField = (password = faker.internet.password()): void => {
-  const passwordInput = screen.getByPlaceholderText(/digite sua senha/i)
-  fireEvent.input(passwordInput, { target: { value: password } })
-}
-
 const simulateValidSubmit = (email = faker.internet.email(), password = faker.internet.password()): void => {
-  populateEmailField(email)
-  populatePasswordField(password)
+  FormHelper.populateField('Digite seu e-mail', email)
+  FormHelper.populateField('Digite sua senha', password)
   const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
   fireEvent.click(submitButton)
-}
-
-const testErrorStatus = (fieldName: string, errorMessage: string, statusEmoji: string): void => {
-  const passwordErrorStatus = screen.getByLabelText(`${fieldName}-error-status`)
-  expect(passwordErrorStatus.title).toBe(errorMessage)
-  expect(passwordErrorStatus.textContent).toBe(statusEmoji)
 }
 
 const testElementExists = (labelText: string): void => {
@@ -92,33 +76,34 @@ describe('<Login />', () => {
     it('Should show email error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      populateEmailField()
-      testErrorStatus('email', errorMessage, '🔴')
+      FormHelper.populateField('Digite seu e-mail', faker.internet.email())
+
+      FormHelper.testErrorStatus('email', errorMessage, '🔴')
     })
 
     it('Should show password error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      populatePasswordField()
-      testErrorStatus('password', errorMessage, '🔴')
+      FormHelper.populateField('Digite sua senha', faker.internet.password())
+      FormHelper.testErrorStatus('password', errorMessage, '🔴')
     })
 
     it('Should show valid email state if Validation succeeds', () => {
       makeSut()
-      populateEmailField()
-      testErrorStatus('email', 'Tudo certo!', '🟢')
+      FormHelper.populateField('Digite seu e-mail', faker.internet.email())
+      FormHelper.testErrorStatus('email', 'Tudo certo!', '🟢')
     })
 
     it('Should show valid password state if Validation succeeds', () => {
       makeSut()
-      populatePasswordField()
-      testErrorStatus('password', 'Tudo certo!', '🟢')
+      FormHelper.populateField('Digite sua senha', faker.internet.password())
+      FormHelper.testErrorStatus('password', 'Tudo certo!', '🟢')
     })
 
     it('Should enable submit button if Validation succeeds', () => {
       makeSut()
-      populateEmailField()
-      populatePasswordField()
+      FormHelper.populateField('Digite seu e-mail', faker.internet.email())
+      FormHelper.populateField('Digite sua senha', faker.internet.password())
       FormHelper.testButtonIsDisabled('Entrar', false)
     })
 
@@ -148,7 +133,7 @@ describe('<Login />', () => {
     it('Should not call Authentication if form is invalid', () => {
       const errorMessage = faker.random.words()
       const { authenticationSpy } = makeSut({ errorMessage })
-      populateEmailField()
+      FormHelper.populateField('Digite seu e-mail', faker.internet.email())
       fireEvent.submit(screen.getByRole('form'))
       expect(authenticationSpy.callsCount).toBe(0)
     })

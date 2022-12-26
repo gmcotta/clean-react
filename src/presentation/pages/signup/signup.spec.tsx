@@ -1,7 +1,7 @@
 import React from 'react'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from '@remix-run/router'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
 
 import { FormHelper, ValidationStub } from '@/presentation/test'
@@ -23,17 +23,6 @@ const makeSut = (params?: SutParams): void => {
       <Signup validation={validationStub} />
     </Router>
   )
-}
-
-const populateField = (placeholderText: string, value: string): void => {
-  const input = screen.getByPlaceholderText(placeholderText)
-  fireEvent.input(input, { target: { value } })
-}
-
-const testErrorStatus = (fieldName: string, errorMessage: string, statusEmoji: string): void => {
-  const passwordErrorStatus = screen.getByLabelText(`${fieldName}-error-status`)
-  expect(passwordErrorStatus.title).toBe(errorMessage)
-  expect(passwordErrorStatus.textContent).toBe(statusEmoji)
 }
 
 describe('<Signup />', () => {
@@ -64,8 +53,8 @@ describe('<Signup />', () => {
     it('Should show name error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      populateField('Digite seu nome', faker.name.firstName())
-      testErrorStatus('name', errorMessage, '🔴')
+      FormHelper.populateField('Digite seu nome', faker.name.firstName())
+      FormHelper.testErrorStatus('name', errorMessage, '🔴')
     })
   })
 })
