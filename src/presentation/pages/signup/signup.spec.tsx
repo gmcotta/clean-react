@@ -95,5 +95,11 @@ describe('<Signup />', () => {
       FormHelper.populateField('Digite sua senha', faker.internet.password())
       FormHelper.testErrorStatus('password', 'Tudo certo!', '🟢')
     })
+
+    it('Should show valid passwordConfirmation state if Validation succeeds', () => {
+      makeSut()
+      FormHelper.populateField('Confirme sua senha', faker.internet.password())
+      FormHelper.testErrorStatus('passwordConfirmation', 'Tudo certo!', '🟢')
+    })
   })
 })
