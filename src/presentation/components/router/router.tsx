@@ -11,7 +11,12 @@ const Router: FC<RouterProps> = ({ Login }) => {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />}/>
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/signup" element={
+          <Signup
+            addAccount={{ add: () => null }}
+            validation={{ validate: () => null }}
+          />}
+        />
       </Routes>
     </BrowserRouter>
   )
