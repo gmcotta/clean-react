@@ -47,11 +47,6 @@ const simulateValidSubmit = (email = faker.internet.email(), password = faker.in
   fireEvent.click(submitButton)
 }
 
-const testElementExists = (labelText: string): void => {
-  const element = screen.getByLabelText(labelText)
-  expect(element).toBeTruthy()
-}
-
 describe('<Login />', () => {
   describe('start', () => {
     it('Should not render spinner and error message on start', () => {
@@ -110,7 +105,7 @@ describe('<Login />', () => {
     it('Should show spinner on submit', () => {
       makeSut()
       simulateValidSubmit()
-      testElementExists('spinner')
+      FormHelper.testElementExists('spinner')
     })
   })
 

@@ -25,3 +25,8 @@ export const testErrorStatus = (fieldName: string, errorMessage: string, statusE
   expect(passwordErrorStatus.title).toBe(errorMessage)
   expect(passwordErrorStatus.textContent).toBe(statusEmoji)
 }
+
+export const testElementExists = (labelText: string): void => {
+  const element = screen.getByLabelText(labelText)
+  expect(element).toBeTruthy()
+}
