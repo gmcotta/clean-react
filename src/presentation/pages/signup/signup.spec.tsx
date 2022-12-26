@@ -83,5 +83,11 @@ describe('<Signup />', () => {
       FormHelper.populateField('Digite seu nome', faker.name.firstName())
       FormHelper.testErrorStatus('name', 'Tudo certo!', '🟢')
     })
+
+    it('Should show valid email state if Validation succeeds', () => {
+      makeSut()
+      FormHelper.populateField('Digite seu e-mail', faker.internet.email())
+      FormHelper.testErrorStatus('email', 'Tudo certo!', '🟢')
+    })
   })
 })
