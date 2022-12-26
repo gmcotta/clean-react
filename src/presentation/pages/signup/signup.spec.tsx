@@ -1,12 +1,13 @@
 import React from 'react'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from '@remix-run/router'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
 
 import { AddAccountSpy, FormHelper, ValidationStub } from '@/presentation/test'
 
 import Signup from './signup'
+import { EmailInUseError } from '@/domain/errors'
 
 const history = createMemoryHistory({ initialEntries: ['/login'] })
 
@@ -165,6 +166,20 @@ describe('<Signup />', () => {
       FormHelper.populateField('Digite seu e-mail', faker.internet.email())
       fireEvent.submit(screen.getByRole('form'))
       expect(addAccountSpy.callsCount).toBe(0)
+    })
+
+    it('Should show error if AddAccount fails', async () => {
+      const { addAccountSpy } = makeSut()
+      const error = new EmailInUseError()
+      jest
+        .spyOn(addAccountSpy, 'add')
+        .mockRejectedValueOnce(error)
+      simulateValidSubmit()
+      await waitFor(async () => {
+        const mainError = await screen.findByLabelText(/main-error/i)
+        expect(mainError.textContent).toBe(error.message)
+        FormHelper.testChildCount('form-status', 1)
+      })
     })
   })
 })
