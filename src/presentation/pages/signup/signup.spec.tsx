@@ -101,5 +101,14 @@ describe('<Signup />', () => {
       FormHelper.populateField('Confirme sua senha', faker.internet.password())
       FormHelper.testErrorStatus('passwordConfirmation', 'Tudo certo!', '🟢')
     })
+
+    it('Should enable submit button if form is valid', () => {
+      makeSut()
+      FormHelper.populateField('Digite seu nome', faker.name.fullName())
+      FormHelper.populateField('Digite seu e-mail', faker.internet.email())
+      FormHelper.populateField('Digite sua senha', faker.internet.password())
+      FormHelper.populateField('Confirme sua senha', faker.internet.password())
+      FormHelper.testButtonIsDisabled('Entrar', false)
+    })
   })
 })
