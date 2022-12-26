@@ -1,3 +1,4 @@
+import { Signup } from '@/presentation/pages'
 import React, { FC } from 'react'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 
@@ -10,7 +11,7 @@ const Router: FC<RouterProps> = ({ Login }) => {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />}/>
-        <Route path="/signup" element={<div>Sign up</div>} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </BrowserRouter>
   )
