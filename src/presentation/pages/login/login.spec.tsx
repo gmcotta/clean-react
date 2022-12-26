@@ -4,7 +4,7 @@ import { createMemoryHistory } from '@remix-run/router'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
 
-import { AuthenticationSpy, SaveAccessTokenMock, ValidationStub } from '@/presentation/test'
+import { AuthenticationSpy, SaveAccessTokenMock, ValidationStub, FormHelper } from '@/presentation/test'
 import { InvalidCredentialsError } from '@/domain/errors'
 import Login from './login'
 
@@ -63,21 +63,6 @@ const testErrorStatus = (fieldName: string, errorMessage: string, statusEmoji: s
   expect(passwordErrorStatus.textContent).toBe(statusEmoji)
 }
 
-const testErrorWrapChildCount = (count: number): void => {
-  const errorWrap = screen.getByLabelText('form-status')
-  expect(errorWrap.childElementCount).toBe(count)
-}
-
-const testElementTitle = (labelText: string, message: string): void => {
-  const emailErrorStatus = screen.getByLabelText(labelText)
-  expect(emailErrorStatus.title).toBe(message)
-}
-
-const testButtonIsDisabled = (buttonText: string, isDisabled = true): void => {
-  const button = screen.getByRole<HTMLButtonElement>('button', { name: buttonText })
-  expect(button.disabled).toBe(isDisabled)
-}
-
 const testElementExists = (labelText: string): void => {
   const element = screen.getByLabelText(labelText)
   expect(element).toBeTruthy()
@@ -87,19 +72,19 @@ describe('<Login />', () => {
   describe('start', () => {
     it('Should not render spinner and error message on start', () => {
       makeSut()
-      testErrorWrapChildCount(0)
+      FormHelper.testChildCount('form-status', 0)
     })
 
     it('Should render button disabled on start', () => {
       makeSut({ errorMessage: faker.random.words() })
-      testButtonIsDisabled('Entrar')
+      FormHelper.testButtonIsDisabled('Entrar')
     })
 
     it('Should render input status errors on start', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      testElementTitle('email-error-status', errorMessage)
-      testElementTitle('password-error-status', errorMessage)
+      FormHelper.testElementTitle('email-error-status', errorMessage)
+      FormHelper.testElementTitle('password-error-status', errorMessage)
     })
   })
 
@@ -134,7 +119,7 @@ describe('<Login />', () => {
       makeSut()
       populateEmailField()
       populatePasswordField()
-      testButtonIsDisabled('Entrar', false)
+      FormHelper.testButtonIsDisabled('Entrar', false)
     })
 
     it('Should show spinner on submit', () => {
@@ -178,7 +163,7 @@ describe('<Login />', () => {
       await waitFor(async () => {
         const mainError = await screen.findByLabelText(/main-error/i)
         expect(mainError.textContent).toBe(error.message)
-        testErrorWrapChildCount(1)
+        FormHelper.testChildCount('form-status', 1)
       })
     })
 
@@ -200,7 +185,7 @@ describe('<Login />', () => {
       await waitFor(async () => {
         const mainError = await screen.findByLabelText(/main-error/i)
         expect(mainError.textContent).toBe(error.message)
-        testErrorWrapChildCount(1)
+        FormHelper.testChildCount('form-status', 1)
       })
     })
 
