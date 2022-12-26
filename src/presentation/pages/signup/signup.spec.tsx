@@ -137,7 +137,7 @@ describe('<Signup />', () => {
   })
 
   describe('AddAccount', () => {
-    it('Should call AddAccount with correct values', async () => {
+    it('Should call AddAccount with correct values', () => {
       const { addAccountSpy } = makeSut()
       const name = faker.name.fullName()
       const email = faker.internet.email()
@@ -150,6 +150,13 @@ describe('<Signup />', () => {
         password,
         passwordConfirmation: password
       })
+    })
+
+    it('Shoul call AddAccount only once', () => {
+      const { addAccountSpy } = makeSut()
+      simulateValidSubmit()
+      simulateValidSubmit()
+      expect(addAccountSpy.callsCount).toBe(1)
     })
   })
 })
