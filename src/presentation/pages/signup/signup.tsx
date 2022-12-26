@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, FormEvent, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Footer, FormStatus, Input, LoginHeader } from '@/presentation/components'
@@ -40,11 +40,16 @@ const Signup: FC<SignupProps> = ({ validation }) => {
     !!state.passwordError ||
     !!state.passwordConfirmationError
 
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault()
+    setState({ ...state, isLoading: true })
+  }
+
   return (
     <div className={Styles.signup}>
       <LoginHeader />
       <FormContext.Provider value={{ state, setState }}>
-        <form role="form" className={Styles.form}>
+        <form role="form" className={Styles.form} onSubmit={handleSubmit}>
           <h2>Criar conta</h2>
           <Input type="text" name="name" placeholder='Digite seu nome' />
           <Input type="email" name="email" placeholder='Digite seu e-mail' />
