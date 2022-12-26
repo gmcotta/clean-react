@@ -30,3 +30,8 @@ export const testElementExists = (labelText: string): void => {
   const element = screen.getByLabelText(labelText)
   expect(element).toBeTruthy()
 }
+
+export const testElementTextContent = (labelText: string, textContent: string): void => {
+  const element = screen.getByLabelText(labelText)
+  expect(element.textContent).toBe(textContent)
+}
