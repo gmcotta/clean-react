@@ -4,7 +4,7 @@ import { createMemoryHistory } from '@remix-run/router'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
 
-import { FormHelper, ValidationStub } from '@/presentation/test'
+import { AddAccountSpy, FormHelper, ValidationStub } from '@/presentation/test'
 
 import Signup from './signup'
 
@@ -14,15 +14,24 @@ type SutParams = {
   errorMessage: string
 }
 
-const makeSut = (params?: SutParams): void => {
+type SutTypes = {
+  addAccountSpy: AddAccountSpy
+}
+
+const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
   validationStub.errorMessage = params?.errorMessage
+  const addAccountSpy = new AddAccountSpy()
 
   render(
     <Router location={history.location} navigator={history}>
-      <Signup validation={validationStub} />
+      <Signup validation={validationStub} addAccount={addAccountSpy} />
     </Router>
   )
+
+  return {
+    addAccountSpy
+  }
 }
 
 const simulateValidSubmit = (name = faker.name.fullName(), email = faker.internet.email(), password = faker.internet.password()): void => {
@@ -124,6 +133,23 @@ describe('<Signup />', () => {
       makeSut()
       simulateValidSubmit()
       FormHelper.testElementExists('spinner')
+    })
+  })
+
+  describe('AddAccount', () => {
+    it('Should call AddAccount with correct values', async () => {
+      const { addAccountSpy } = makeSut()
+      const name = faker.name.fullName()
+      const email = faker.internet.email()
+      const password = faker.internet.password()
+
+      simulateValidSubmit(name, email, password)
+      expect(addAccountSpy.params).toStrictEqual({
+        name,
+        email,
+        password,
+        passwordConfirmation: password
+      })
     })
   })
 })
