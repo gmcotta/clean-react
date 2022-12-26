@@ -43,22 +43,26 @@ const Signup: FC<SignupProps> = ({ validation, addAccount }) => {
     !!state.passwordConfirmationError
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
-    event.preventDefault()
-    if (state.isLoading ||
-      state.nameError ||
-      state.emailError ||
-      state.passwordError ||
-      state.passwordConfirmationError
-    ) {
-      return
+    try {
+      event.preventDefault()
+      if (state.isLoading ||
+        state.nameError ||
+        state.emailError ||
+        state.passwordError ||
+        state.passwordConfirmationError
+      ) {
+        return
+      }
+      setState({ ...state, isLoading: true })
+      await addAccount.add({
+        name: state.name,
+        email: state.email,
+        password: state.password,
+        passwordConfirmation: state.passwordConfirmation
+      })
+    } catch (error) {
+      setState({ ...state, isLoading: false, mainError: error.message })
     }
-    setState({ ...state, isLoading: true })
-    await addAccount.add({
-      name: state.name,
-      email: state.email,
-      password: state.password,
-      passwordConfirmation: state.passwordConfirmation
-    })
   }
 
   return (
