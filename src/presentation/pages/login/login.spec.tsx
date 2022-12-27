@@ -162,8 +162,7 @@ describe('<Login />', () => {
       jest.spyOn(saveAccessTokenMock, 'save').mockRejectedValueOnce(error)
       simulateValidSubmit()
       await waitFor(async () => {
-        const mainError = await screen.findByLabelText(/main-error/i)
-        expect(mainError.textContent).toBe(error.message)
+        FormHelper.testElementTextContent('main-error', error.message)
         FormHelper.testChildCount('form-status', 1)
       })
     })
