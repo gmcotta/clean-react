@@ -208,5 +208,13 @@ describe('<Signup />', () => {
         FormHelper.testChildCount('form-status', 1)
       })
     })
+
+    it('Should go to login page', () => {
+      makeSut()
+      const login = screen.getByText('Voltar para Login')
+      fireEvent.click(login)
+      expect(history.index).toBe(1)
+      expect(history.location.pathname).toBe('/login')
+    })
   })
 })
