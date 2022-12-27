@@ -15,6 +15,7 @@ const Router: FC<RouterProps> = ({ Login }) => {
           <Signup
             addAccount={{ add: () => null }}
             validation={{ validate: () => null }}
+            saveAccessToken={{ save: () => null }}
           />}
         />
       </Routes>
