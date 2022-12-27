@@ -47,7 +47,7 @@ const simulateValidSubmit = (name = faker.name.fullName(), email = faker.interne
   FormHelper.populateField('Digite seu e-mail', email)
   FormHelper.populateField('Digite sua senha', password)
   FormHelper.populateField('Confirme sua senha', password)
-  const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
+  const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /cadastrar/i })
   fireEvent.click(submitButton)
 }
 
@@ -62,7 +62,7 @@ describe('<Signup />', () => {
     it('Should render button disabled on start', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      FormHelper.testButtonIsDisabled('Entrar')
+      FormHelper.testButtonIsDisabled('Cadastrar')
     })
 
     it('Should render input status errors on start', () => {
@@ -134,7 +134,7 @@ describe('<Signup />', () => {
       FormHelper.populateField('Digite seu e-mail', faker.internet.email())
       FormHelper.populateField('Digite sua senha', faker.internet.password())
       FormHelper.populateField('Confirme sua senha', faker.internet.password())
-      FormHelper.testButtonIsDisabled('Entrar', false)
+      FormHelper.testButtonIsDisabled('Cadastrar', false)
     })
 
     it('Should show spinner on submit', () => {
