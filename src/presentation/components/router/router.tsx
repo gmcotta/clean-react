@@ -1,23 +1,17 @@
-import { Signup } from '@/presentation/pages'
 import React, { FC } from 'react'
 import { Routes, Route, BrowserRouter } from 'react-router-dom'
 
-type RouterProps = {
+type RouterFactories = {
   Login: FC
+  Signup: FC
 }
 
-const Router: FC<RouterProps> = ({ Login }) => {
+const Router: FC<RouterFactories> = (factories) => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />}/>
-        <Route path="/signup" element={
-          <Signup
-            addAccount={{ add: () => null }}
-            validation={{ validate: () => null }}
-            saveAccessToken={{ save: () => null }}
-          />}
-        />
+        <Route path="/login" element={<factories.Login />} />
+        <Route path="/signup" element={<factories.Signup />} />
       </Routes>
     </BrowserRouter>
   )
