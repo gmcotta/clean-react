@@ -10,13 +10,13 @@ const makeSut = (fieldName: string): RequiredFieldValidation => {
 describe('RequiredFieldValidation', () => {
   it('Should return error if field is empty', () => {
     const sut = makeSut('email')
-    const error = sut.validate('')
+    const error = sut.validate({ email: '' })
     expect(error).toEqual(new RequiredFieldError())
   })
 
   it('Should return false if field is valid', () => {
     const sut = makeSut('email')
-    const error = sut.validate(faker.random.word())
+    const error = sut.validate({ email: faker.random.word() })
     expect(error).toBeFalsy()
   })
 })
