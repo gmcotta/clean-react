@@ -1,50 +1,66 @@
 import React, { FC, FormEvent, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { Authentication, SaveAccessToken } from '@/domain/usecases'
+import { AddAccount, SaveAccessToken } from '@/domain/usecases'
 import { Footer, FormStatus, Input, LoginHeader, SubmitButton } from '@/presentation/components'
 import FormContext from '@/presentation/contexts/form/form-context'
 import { Validation } from '@/presentation/protocols/validation'
 
-import Styles from './login-styles.scss'
+import Styles from './signup-styles.scss'
 
-type LoginProps = {
+type SignupProps = {
   validation: Validation
-  authentication: Authentication
+  addAccount: AddAccount
   saveAccessToken: SaveAccessToken
 }
 
-const Login: FC<LoginProps> = ({ validation, authentication, saveAccessToken }) => {
+const Signup: FC<SignupProps> = ({ validation, addAccount, saveAccessToken }) => {
   const navigate = useNavigate()
+
   const [state, setState] = useState({
     isLoading: false,
     isFormInvalid: true,
+    mainError: '',
+    name: '',
+    nameError: '',
     email: '',
-    password: '',
     emailError: '',
+    password: '',
     passwordError: '',
-    mainError: ''
+    passwordConfirmation: '',
+    passwordConfirmationError: 'Campo obrigatório'
   })
 
   useEffect(() => {
+    const nameError = validation.validate('name', state)
     const emailError = validation.validate('email', state)
     const passwordError = validation.validate('password', state)
+    const passwordConfirmationError = validation.validate('passwordConfirmation', state)
+    const isFormInvalid = !!nameError || !!emailError || !!passwordError || !!passwordConfirmationError
+
     setState({
       ...state,
+      nameError,
       emailError,
       passwordError,
-      isFormInvalid: !!emailError || !!passwordError
+      passwordConfirmationError,
+      isFormInvalid
     })
-  }, [state.email, state.password])
+  }, [state.name, state.email, state.password, state.passwordConfirmation])
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
-    event.preventDefault()
     try {
+      event.preventDefault()
       if (state.isLoading || state.isFormInvalid) {
         return
       }
       setState({ ...state, isLoading: true })
-      const account = await authentication.auth({ email: state.email, password: state.password })
+      const account = await addAccount.add({
+        name: state.name,
+        email: state.email,
+        password: state.password,
+        passwordConfirmation: state.passwordConfirmation
+      })
       await saveAccessToken.save(account.accessToken)
       navigate('/', { replace: true })
     } catch (error) {
@@ -53,15 +69,17 @@ const Login: FC<LoginProps> = ({ validation, authentication, saveAccessToken }) 
   }
 
   return (
-    <div className={Styles.login}>
+    <div className={Styles.signup}>
       <LoginHeader />
       <FormContext.Provider value={{ state, setState }}>
         <form role="form" className={Styles.form} onSubmit={handleSubmit}>
-          <h2>Login</h2>
+          <h2>Criar conta</h2>
+          <Input type="text" name="name" placeholder='Digite seu nome' />
           <Input type="email" name="email" placeholder='Digite seu e-mail' />
           <Input type="password" name="password" placeholder='Digite sua senha' />
-          <SubmitButton>Entrar</SubmitButton>
-          <Link to="/signup" className={Styles.link}>Criar conta</Link>
+          <Input type="password" name="passwordConfirmation" placeholder='Confirme sua senha' />
+          <SubmitButton>Cadastrar</SubmitButton>
+          <Link to="/login" className={Styles.link}>Voltar para Login</Link>
           <FormStatus />
         </form>
       </FormContext.Provider>
@@ -70,4 +88,4 @@ const Login: FC<LoginProps> = ({ validation, authentication, saveAccessToken }) 
   )
 }
 
-export default Login
+export default Signup
