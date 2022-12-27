@@ -4,12 +4,12 @@ import { createMemoryHistory } from '@remix-run/router'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
 
-import { AddAccountSpy, FormHelper, ValidationStub } from '@/presentation/test'
+import { AddAccountSpy, FormHelper, SaveAccessTokenMock, ValidationStub } from '@/presentation/test'
 
 import Signup from './signup'
 import { EmailInUseError } from '@/domain/errors'
 
-const history = createMemoryHistory({ initialEntries: ['/login'] })
+const history = createMemoryHistory({ initialEntries: ['/signup'] })
 
 type SutParams = {
   errorMessage: string
@@ -17,21 +17,28 @@ type SutParams = {
 
 type SutTypes = {
   addAccountSpy: AddAccountSpy
+  saveAccessTokenMock: SaveAccessTokenMock
 }
 
 const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
   validationStub.errorMessage = params?.errorMessage
   const addAccountSpy = new AddAccountSpy()
+  const saveAccessTokenMock = new SaveAccessTokenMock()
 
   render(
     <Router location={history.location} navigator={history}>
-      <Signup validation={validationStub} addAccount={addAccountSpy} />
+      <Signup
+        validation={validationStub}
+        addAccount={addAccountSpy}
+        saveAccessToken={saveAccessTokenMock}
+      />
     </Router>
   )
 
   return {
-    addAccountSpy
+    addAccountSpy,
+    saveAccessTokenMock
   }
 }
 
@@ -178,6 +185,16 @@ describe('<Signup />', () => {
       await waitFor(async () => {
         FormHelper.testElementTextContent('main-error', error.message)
         FormHelper.testChildCount('form-status', 1)
+      })
+    })
+
+    it('Should call SaveAccessToken on success', async () => {
+      const { addAccountSpy, saveAccessTokenMock } = makeSut()
+      simulateValidSubmit()
+      await waitFor(() => {
+        expect(saveAccessTokenMock.accessToken).toBe(addAccountSpy.account.accessToken)
+        expect(history.index).toBe(0)
+        expect(history.location.pathname).toBe('/')
       })
     })
   })
