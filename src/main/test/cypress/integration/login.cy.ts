@@ -1,6 +1,8 @@
 /// <reference types="cypress" />
-// const { faker } = require('@faker-js/faker')
+
 import { faker } from '@faker-js/faker'
+
+const baseUrl = Cypress.config().baseUrl
 
 describe('Login', () => {
   beforeEach(() => {
@@ -62,5 +64,20 @@ describe('Login', () => {
       .should('have.text', 'Entrar')
     cy.getByAriaLabel('form-status').children()
       .should('have.length', 0)
+  })
+
+  it('Should show error if invalid credentials are provided', () => {
+    cy.getByName('email').focus().type(faker.internet.email())
+
+    cy.getByName('password').focus().type(faker.internet.password(5))
+
+    cy.get('button[type="submit"]').click()
+    cy.getByAriaLabel('form-status').within(formStatus => {
+      cy.getByAriaLabel('spinner').should('exist')
+      cy.getByAriaLabel('main-error').should('not.exist')
+      cy.getByAriaLabel('spinner').should('not.exist')
+      cy.getByAriaLabel('main-error').should('have.text', 'Credenciais inválidas')
+    })
+    cy.url().should('eq', `${baseUrl}/login`)
   })
 })
