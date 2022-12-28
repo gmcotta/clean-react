@@ -40,4 +40,22 @@ describe('Signup', () => {
     cy.get('button[type="submit"]').should('be.disabled').should('have.text', 'Cadastrar')
     cy.getByAriaLabel('form-status').children().should('have.length', 0)
   })
+
+  it('Should show valid state if form is valid', () => {
+    cy.getByName('name').focus().type(faker.name.fullName())
+    FormHelper.testInputStatus('name')
+
+    cy.getByName('email').focus().type(faker.internet.email())
+    FormHelper.testInputStatus('email')
+
+    const password = faker.internet.password()
+    cy.getByName('password').focus().type(password)
+    FormHelper.testInputStatus('password')
+
+    cy.getByName('passwordConfirmation').focus().type(password)
+    FormHelper.testInputStatus('passwordConfirmation')
+
+    cy.get('button[type="submit"]').should('not.be.disabled').should('have.text', 'Cadastrar')
+    cy.getByAriaLabel('form-status').children().should('have.length', 0)
+  })
 })
