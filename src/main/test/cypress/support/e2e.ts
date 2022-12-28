@@ -19,8 +19,8 @@ import './commands'
 declare global {
   namespace Cypress {
     interface Chainable {
-      getByAriaLabel: (ariaLabel: string) => Chainable
-      getByName: (name: string) => Chainable
+      getByAriaLabel: (ariaLabel: string) => Chainable<JQuery<HTMLElement>>
+      getByName: (name: string) => Chainable<JQuery<HTMLElement>>
     }
   }
 }
