@@ -34,13 +34,31 @@ describe('Login', () => {
       .should('have.attr', 'title', 'Campo inválido')
       .should('have.text', '🔴')
 
-    cy.getByName('password').focus().type(faker.random.alphaNumeric(3))
+    cy.getByName('password').focus().type(faker.internet.password(3))
     cy.getByAriaLabel('password-error-status')
       .should('have.attr', 'title', 'Campo inválido')
       .should('have.text', '🔴')
 
     cy.get('button[type="submit"]')
       .should('be.disabled')
+      .should('have.text', 'Entrar')
+    cy.getByAriaLabel('form-status').children()
+      .should('have.length', 0)
+  })
+
+  it('Should show valid state if form is valid', () => {
+    cy.getByName('email').focus().type(faker.internet.email())
+    cy.getByAriaLabel('email-error-status')
+      .should('have.attr', 'title', 'Tudo certo!')
+      .should('have.text', '🟢')
+
+    cy.getByName('password').focus().type(faker.internet.password(5))
+    cy.getByAriaLabel('password-error-status')
+      .should('have.attr', 'title', 'Tudo certo!')
+      .should('have.text', '🟢')
+
+    cy.get('button[type="submit"]')
+      .should('not.be.disabled')
       .should('have.text', 'Entrar')
     cy.getByAriaLabel('form-status').children()
       .should('have.length', 0)
