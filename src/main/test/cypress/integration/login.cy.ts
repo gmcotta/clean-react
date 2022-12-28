@@ -102,8 +102,7 @@ describe('Login', () => {
     }).as('loginSuccess')
 
     cy.getByName('email').focus().type(faker.internet.email())
-    cy.getByName('password').focus().type(faker.internet.password(5))
-    cy.get('button[type="submit"]').click()
+    cy.getByName('password').focus().type(faker.internet.password(5)).type('{enter}')
     cy.getByAriaLabel('form-status').within(() => {
       cy.getByAriaLabel('spinner').should('exist')
       cy.getByAriaLabel('main-error').should('not.exist')
