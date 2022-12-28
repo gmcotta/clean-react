@@ -77,4 +77,14 @@ describe('Signup', () => {
     FormHelper.testMainError('E-mail já está em uso')
     FormHelper.testUrl('/signup')
   })
+
+  it('Should save accessToken in localStorage', () => {
+    const accessToken = faker.datatype.uuid()
+    HTTPMock.mockOK(accessToken)
+
+    simulateValidSubmit()
+    cy.getByAriaLabel('spinner').should('exist')
+    FormHelper.testUrl('/')
+    FormHelper.testLocalStorageItem('accessToken', accessToken)
+  })
 })
