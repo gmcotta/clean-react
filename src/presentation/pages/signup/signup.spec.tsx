@@ -68,10 +68,14 @@ describe('<Signup />', () => {
     it('Should render input status errors on start', () => {
       const errorMessage = faker.random.word()
       makeSut({ errorMessage })
-      FormHelper.testElementTitle('name-error-status', errorMessage)
-      FormHelper.testElementTitle('email-error-status', errorMessage)
-      FormHelper.testElementTitle('password-error-status', errorMessage)
-      FormHelper.testElementTitle('passwordConfirmation-error-status', errorMessage)
+      FormHelper.testElementTitle('name', errorMessage)
+      FormHelper.testElementTitle('name-label', errorMessage)
+      FormHelper.testElementTitle('email', errorMessage)
+      FormHelper.testElementTitle('email-label', errorMessage)
+      FormHelper.testElementTitle('password', errorMessage)
+      FormHelper.testElementTitle('password-label', errorMessage)
+      FormHelper.testElementTitle('passwordConfirmation', errorMessage)
+      FormHelper.testElementTitle('passwordConfirmation-label', errorMessage)
     })
   })
 
@@ -80,52 +84,52 @@ describe('<Signup />', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
       FormHelper.populateField('name', faker.name.firstName())
-      FormHelper.testErrorStatus('name', errorMessage, '🔴')
+      FormHelper.testErrorStatus('name', errorMessage)
     })
 
     it('Should show email error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
       FormHelper.populateField('email', faker.internet.email())
-      FormHelper.testErrorStatus('email', errorMessage, '🔴')
+      FormHelper.testErrorStatus('email', errorMessage)
     })
 
     it('Should show password error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
       FormHelper.populateField('password', faker.internet.password())
-      FormHelper.testErrorStatus('password', errorMessage, '🔴')
+      FormHelper.testErrorStatus('password', errorMessage)
     })
 
     it('Should show passwordConfirmation error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
       FormHelper.populateField('passwordConfirmation', faker.internet.password())
-      FormHelper.testErrorStatus('passwordConfirmation', errorMessage, '🔴')
+      FormHelper.testErrorStatus('passwordConfirmation', errorMessage)
     })
 
     it('Should show valid name state if Validation succeeds', () => {
       makeSut()
       FormHelper.populateField('name', faker.name.firstName())
-      FormHelper.testErrorStatus('name', 'Tudo certo!', '🟢')
+      FormHelper.testErrorStatus('name')
     })
 
     it('Should show valid email state if Validation succeeds', () => {
       makeSut()
       FormHelper.populateField('email', faker.internet.email())
-      FormHelper.testErrorStatus('email', 'Tudo certo!', '🟢')
+      FormHelper.testErrorStatus('email')
     })
 
     it('Should show valid password state if Validation succeeds', () => {
       makeSut()
       FormHelper.populateField('password', faker.internet.password())
-      FormHelper.testErrorStatus('password', 'Tudo certo!', '🟢')
+      FormHelper.testErrorStatus('password')
     })
 
     it('Should show valid passwordConfirmation state if Validation succeeds', () => {
       makeSut()
       FormHelper.populateField('passwordConfirmation', faker.internet.password())
-      FormHelper.testErrorStatus('passwordConfirmation', 'Tudo certo!', '🟢')
+      FormHelper.testErrorStatus('passwordConfirmation')
     })
 
     it('Should enable submit button if form is valid', () => {

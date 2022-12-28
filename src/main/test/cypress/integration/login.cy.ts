@@ -10,17 +10,22 @@ describe('Login', () => {
   })
 
   it('Should load with correct initial state', () => {
+    cy.getByAriaLabel('email-wrapper')
+      .should('have.attr', 'data-status', 'invalid')
+
     cy.getByName('email')
       .should('have.attr', 'readOnly')
-    cy.getByAriaLabel('email-error-status')
+    cy.getByName('email')
       .should('have.attr', 'title', 'Campo obrigatório')
-      .should('have.text', '🔴')
+    cy.getByAriaLabel('email-label')
+      .should('have.attr', 'title', 'Campo obrigatório')
 
     cy.getByName('password')
       .should('have.attr', 'readOnly')
-    cy.getByAriaLabel('password-error-status')
+    cy.getByName('password')
       .should('have.attr', 'title', 'Campo obrigatório')
-      .should('have.text', '🔴')
+    cy.getByAriaLabel('password-label')
+      .should('have.attr', 'title', 'Campo obrigatório')
 
     cy.get('button[type="submit"]')
       .should('be.disabled')
@@ -32,14 +37,18 @@ describe('Login', () => {
 
   it('Should show error state if form is invalid', () => {
     cy.getByName('email').focus().type(faker.random.word())
-    cy.getByAriaLabel('email-error-status')
       .should('have.attr', 'title', 'Campo inválido')
-      .should('have.text', '🔴')
+    cy.getByAriaLabel('email-label')
+      .should('have.attr', 'title', 'Campo inválido')
+    cy.getByAriaLabel('email-wrapper')
+      .should('have.attr', 'data-status', 'invalid')
 
     cy.getByName('password').focus().type(faker.internet.password(3))
-    cy.getByAriaLabel('password-error-status')
       .should('have.attr', 'title', 'Campo inválido')
-      .should('have.text', '🔴')
+    cy.getByAriaLabel('password-label')
+      .should('have.attr', 'title', 'Campo inválido')
+    cy.getByAriaLabel('password-wrapper')
+      .should('have.attr', 'data-status', 'invalid')
 
     cy.get('button[type="submit"]')
       .should('be.disabled')
@@ -49,15 +58,23 @@ describe('Login', () => {
   })
 
   it('Should show valid state if form is valid', () => {
+    cy.getByAriaLabel('email-wrapper')
+      .should('have.attr', 'data-status', 'invalid')
     cy.getByName('email').focus().type(faker.internet.email())
-    cy.getByAriaLabel('email-error-status')
-      .should('have.attr', 'title', 'Tudo certo!')
-      .should('have.text', '🟢')
+      .should('not.have.attr', 'title')
+    cy.getByAriaLabel('email-label')
+      .should('not.have.attr', 'title')
+    cy.getByAriaLabel('email-wrapper')
+      .should('have.attr', 'data-status', 'valid')
 
+    cy.getByAriaLabel('password-wrapper')
+      .should('have.attr', 'data-status', 'invalid')
     cy.getByName('password').focus().type(faker.internet.password(5))
-    cy.getByAriaLabel('password-error-status')
-      .should('have.attr', 'title', 'Tudo certo!')
-      .should('have.text', '🟢')
+      .should('not.have.attr', 'title')
+    cy.getByAriaLabel('password-label')
+      .should('not.have.attr', 'title')
+    cy.getByAriaLabel('password-wrapper')
+      .should('have.attr', 'data-status', 'valid')
 
     cy.get('button[type="submit"]')
       .should('not.be.disabled')

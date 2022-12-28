@@ -16,7 +16,7 @@ const Input: FC<InputProps> = (props) => {
   }
 
   return (
-    <div className={Styles.inputWrap}>
+    <div className={Styles.inputWrap} data-status={errorMessage ? 'invalid' : 'valid'} aria-label={`${props.name}-wrapper`}>
       <input
         {...props}
         placeholder=" "
@@ -25,15 +25,9 @@ const Input: FC<InputProps> = (props) => {
         onChange={handleChange}
         id={props.name}
         aria-label={props.name}
+        title={errorMessage}
       />
-      <label htmlFor={props.name}>{props.placeholder}</label>
-      <span
-        title={errorMessage || 'Tudo certo!'}
-        aria-label={`${props.name}-error-status`}
-        className={Styles.status}
-      >
-        {errorMessage ? '🔴' : '🟢'}
-      </span>
+      <label htmlFor={props.name} title={errorMessage} aria-label={`${props.name}-label`}>{props.placeholder}</label>
     </div>
   )
 }

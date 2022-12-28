@@ -20,10 +20,13 @@ export const populateField = (labelText: string, value: string): void => {
   fireEvent.input(input, { target: { value } })
 }
 
-export const testErrorStatus = (fieldName: string, errorMessage: string, statusEmoji: string): void => {
-  const passwordErrorStatus = screen.getByLabelText(`${fieldName}-error-status`)
-  expect(passwordErrorStatus.title).toBe(errorMessage)
-  expect(passwordErrorStatus.textContent).toBe(statusEmoji)
+export const testErrorStatus = (fieldName: string, errorMessage = ''): void => {
+  const wrapper = screen.getByLabelText(`${fieldName}-wrapper`)
+  const input = screen.getByLabelText(fieldName)
+  const label = screen.getByLabelText(`${fieldName}-label`)
+  expect(wrapper.getAttribute('data-status')).toBe(errorMessage ? 'invalid' : 'valid')
+  expect(input.title).toBe(errorMessage)
+  expect(label.title).toBe(errorMessage)
 }
 
 export const testElementExists = (labelText: string): void => {

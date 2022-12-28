@@ -62,8 +62,10 @@ describe('<Login />', () => {
     it('Should render input status errors on start', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      FormHelper.testElementTitle('email-error-status', errorMessage)
-      FormHelper.testElementTitle('password-error-status', errorMessage)
+      FormHelper.testElementTitle('email', errorMessage)
+      FormHelper.testElementTitle('email-label', errorMessage)
+      FormHelper.testElementTitle('password', errorMessage)
+      FormHelper.testElementTitle('password-label', errorMessage)
     })
   })
 
@@ -73,26 +75,26 @@ describe('<Login />', () => {
       makeSut({ errorMessage })
       FormHelper.populateField('email', faker.internet.email())
 
-      FormHelper.testErrorStatus('email', errorMessage, '🔴')
+      FormHelper.testErrorStatus('email', errorMessage)
     })
 
     it('Should show password error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
       FormHelper.populateField('password', faker.internet.password())
-      FormHelper.testErrorStatus('password', errorMessage, '🔴')
+      FormHelper.testErrorStatus('password', errorMessage)
     })
 
     it('Should show valid email state if Validation succeeds', () => {
       makeSut()
       FormHelper.populateField('email', faker.internet.email())
-      FormHelper.testErrorStatus('email', 'Tudo certo!', '🟢')
+      FormHelper.testErrorStatus('email')
     })
 
     it('Should show valid password state if Validation succeeds', () => {
       makeSut()
       FormHelper.populateField('password', faker.internet.password())
-      FormHelper.testErrorStatus('password', 'Tudo certo!', '🟢')
+      FormHelper.testErrorStatus('password')
     })
 
     it('Should enable submit button if Validation succeeds', () => {
