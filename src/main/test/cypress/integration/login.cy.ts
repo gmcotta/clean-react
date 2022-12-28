@@ -112,4 +112,27 @@ describe('Login', () => {
     cy.url().should('eq', `${baseUrl}/`)
     cy.window().then(window => assert.equal(accessToken, window.localStorage.getItem('accessToken')))
   })
+
+  it('Should show UnexpectedError for other errors', () => {
+    cy.intercept({
+      method: 'POST',
+      url: 'http://localhost:5050/api/login'
+    }, {
+      body: {
+        body: faker.random.word()
+      },
+      statusCode: 500
+    }).as('loginFailure')
+
+    cy.getByName('email').focus().type(faker.internet.email())
+    cy.getByName('password').focus().type(faker.internet.password(5))
+    cy.get('button[type="submit"]').click()
+    cy.getByAriaLabel('form-status').within(() => {
+      cy.getByAriaLabel('spinner').should('exist')
+      cy.getByAriaLabel('main-error').should('not.exist')
+      cy.getByAriaLabel('spinner').should('not.exist')
+      cy.getByAriaLabel('main-error').should('have.text', 'Aconteceu algo de errado. Tente novamente mais tarde.')
+    })
+    cy.url().should('eq', `${baseUrl}/login`)
+  })
 })
