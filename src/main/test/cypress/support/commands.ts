@@ -35,3 +35,6 @@
 //     }
 //   }
 // }
+Cypress.Commands.add('getByAriaLabel', (ariaLabel: string): Cypress.Chainable => {
+  return cy.get(`[aria-label="${ariaLabel}"]`)
+})
