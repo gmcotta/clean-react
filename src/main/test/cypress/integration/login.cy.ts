@@ -72,12 +72,26 @@ describe('Login', () => {
     cy.getByName('password').focus().type(faker.internet.password(5))
 
     cy.get('button[type="submit"]').click()
-    cy.getByAriaLabel('form-status').within(formStatus => {
+    cy.getByAriaLabel('form-status').within(() => {
       cy.getByAriaLabel('spinner').should('exist')
       cy.getByAriaLabel('main-error').should('not.exist')
       cy.getByAriaLabel('spinner').should('not.exist')
       cy.getByAriaLabel('main-error').should('have.text', 'Credenciais inválidas')
     })
     cy.url().should('eq', `${baseUrl}/login`)
+  })
+
+  it('Should save accessToken in localStorage', () => {
+    cy.getByName('email').focus().type('aaabbb@email.com')
+    cy.getByName('password').focus().type('123456')
+
+    cy.get('button[type="submit"]').click()
+    cy.getByAriaLabel('form-status').within(() => {
+      cy.getByAriaLabel('spinner').should('exist')
+      cy.getByAriaLabel('main-error').should('not.exist')
+      cy.getByAriaLabel('spinner').should('not.exist')
+    })
+    cy.url().should('eq', `${baseUrl}/`)
+    cy.window().then(window => assert.isOk(window.localStorage.getItem('accessToken')))
   })
 })
