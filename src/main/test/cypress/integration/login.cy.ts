@@ -66,11 +66,19 @@ describe('Login', () => {
       .should('have.length', 0)
   })
 
-  it('Should show error if invalid credentials are provided', () => {
+  it('Should show InvalidCredentialError if invalid credentials are provided', () => {
+    cy.intercept({
+      method: 'POST',
+      url: 'http://localhost:5050/api/login'
+    }, {
+      body: {
+        body: faker.random.word()
+      },
+      statusCode: 401
+    }).as('loginFailure')
+
     cy.getByName('email').focus().type(faker.internet.email())
-
     cy.getByName('password').focus().type(faker.internet.password(5))
-
     cy.get('button[type="submit"]').click()
     cy.getByAriaLabel('form-status').within(() => {
       cy.getByAriaLabel('spinner').should('exist')
@@ -82,9 +90,19 @@ describe('Login', () => {
   })
 
   it('Should save accessToken in localStorage', () => {
+    const accessToken = faker.datatype.uuid()
+    cy.intercept({
+      method: 'POST',
+      url: 'http://localhost:5050/api/login'
+    }, {
+      body: {
+        accessToken
+      },
+      statusCode: 200
+    }).as('loginSuccess')
+
     cy.getByName('email').focus().type('aaabbb@email.com')
     cy.getByName('password').focus().type('123456')
-
     cy.get('button[type="submit"]').click()
     cy.getByAriaLabel('form-status').within(() => {
       cy.getByAriaLabel('spinner').should('exist')
@@ -92,6 +110,6 @@ describe('Login', () => {
       cy.getByAriaLabel('spinner').should('not.exist')
     })
     cy.url().should('eq', `${baseUrl}/`)
-    cy.window().then(window => assert.isOk(window.localStorage.getItem('accessToken')))
+    cy.window().then(window => assert.equal(accessToken, window.localStorage.getItem('accessToken')))
   })
 })
