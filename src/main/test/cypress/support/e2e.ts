@@ -20,6 +20,7 @@ declare global {
   namespace Cypress {
     interface Chainable {
       getByAriaLabel: (ariaLabel: string) => Chainable
+      getByName: (name: string) => Chainable
     }
   }
 }

@@ -38,3 +38,6 @@
 Cypress.Commands.add('getByAriaLabel', (ariaLabel: string): Cypress.Chainable => {
   return cy.get(`[aria-label="${ariaLabel}"]`)
 })
+Cypress.Commands.add('getByName', (name: string): Cypress.Chainable => {
+  return cy.get(`[name="${name}"]`)
+})
