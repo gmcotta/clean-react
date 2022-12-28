@@ -1,5 +1,16 @@
 import { faker } from '@faker-js/faker'
+
+import * as HTTPMock from '../signup/signup-mocks'
 import * as FormHelper from '../../support/form-helper'
+
+const simulateValidSubmit = (): void => {
+  cy.getByName('name').focus().type(faker.name.fullName())
+  cy.getByName('email').focus().type(faker.internet.email())
+  const password = faker.internet.password()
+  cy.getByName('password').focus().type(password)
+  cy.getByName('passwordConfirmation').focus().type(password)
+  cy.get('button[type="submit"]').click()
+}
 
 describe('Signup', () => {
   beforeEach(() => {
@@ -57,5 +68,13 @@ describe('Signup', () => {
 
     cy.get('button[type="submit"]').should('not.be.disabled').should('have.text', 'Cadastrar')
     cy.getByAriaLabel('form-status').children().should('have.length', 0)
+  })
+
+  it('Should show EmailInUseError if status code is 403', () => {
+    HTTPMock.mockEmailInUseError()
+
+    simulateValidSubmit()
+    FormHelper.testMainError('E-mail já está em uso')
+    FormHelper.testUrl('/signup')
   })
 })

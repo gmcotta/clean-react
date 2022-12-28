@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+
 import * as HTTPMock from './login-mocks'
 import * as FormHelper from '../../support/form-helper'
 
@@ -47,7 +48,7 @@ describe('Login', () => {
     cy.getByAriaLabel('form-status').children().should('have.length', 0)
   })
 
-  it('Should show InvalidCredentialError if invalid credentials are provided', () => {
+  it('Should show InvalidCredentialError if status code is 401', () => {
     HTTPMock.mockInvalidCredentialsError()
 
     simulateValidSubmit()
