@@ -3,7 +3,7 @@ import * as HTTPHelper from '../../support/http-mocks'
 
 export const mockEmailInUseError = (): void => HTTPHelper.mockEmailInUseError(
   'http://localhost:5050/api/signup',
-  'loginEmailInUse'
+  'signupEmailInUse'
 )
 
 export const mockOK = (accessToken = faker.datatype.uuid()): void => HTTPHelper.mockOK(
@@ -12,11 +12,20 @@ export const mockOK = (accessToken = faker.datatype.uuid()): void => HTTPHelper.
   {
     accessToken
   },
-  'loginSuccess'
+  'signupSuccess'
 )
 
 export const mockUnexpectedError = (): void => HTTPHelper.mockUnexpectedError(
   'POST',
   'http://localhost:5050/api/signup',
-  'loginUnexpectedError'
+  'signupUnexpectedError'
+)
+
+export const mockInvalidResponse = (): void => HTTPHelper.mockOK(
+  'POST',
+  'http://localhost:5050/api/signup',
+  {
+    invalid: faker.random.word()
+  },
+  'signupInvalidResponse'
 )
