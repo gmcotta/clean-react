@@ -1,0 +1,99 @@
+import { faker } from '@faker-js/faker'
+import * as HTTPMock from './login-mocks'
+import * as FormHelper from '../../support/form-helper'
+
+const simulateValidSubmit = (): void => {
+  cy.getByName('email').focus().type(faker.internet.email())
+  cy.getByName('password').focus().type(faker.internet.password(5))
+  cy.get('button[type="submit"]').click()
+}
+
+describe('Login', () => {
+  beforeEach(() => {
+    cy.visit('login')
+  })
+
+  it('Should load with correct initial state', () => {
+    FormHelper.testInputStatus('email', 'Campo obrigatório')
+    cy.getByName('email').should('have.attr', 'readOnly')
+
+    FormHelper.testInputStatus('password', 'Campo obrigatório')
+    cy.getByName('password').should('have.attr', 'readOnly')
+
+    cy.get('button[type="submit"]').should('be.disabled').should('have.text', 'Entrar')
+
+    cy.getByAriaLabel('form-status').children().should('have.length', 0)
+  })
+
+  it('Should show error state if form is invalid', () => {
+    cy.getByName('email').focus().type(faker.random.word())
+    FormHelper.testInputStatus('email', 'Campo inválido')
+
+    cy.getByName('password').focus().type(faker.internet.password(3))
+    FormHelper.testInputStatus('password', 'Campo inválido')
+
+    cy.get('button[type="submit"]').should('be.disabled').should('have.text', 'Entrar')
+    cy.getByAriaLabel('form-status').children().should('have.length', 0)
+  })
+
+  it('Should show valid state if form is valid', () => {
+    cy.getByName('email').focus().type(faker.internet.email())
+    FormHelper.testInputStatus('email')
+
+    cy.getByName('password').focus().type(faker.internet.password(5))
+    FormHelper.testInputStatus('password')
+
+    cy.get('button[type="submit"]').should('not.be.disabled').should('have.text', 'Entrar')
+    cy.getByAriaLabel('form-status').children().should('have.length', 0)
+  })
+
+  it('Should show InvalidCredentialError if invalid credentials are provided', () => {
+    HTTPMock.mockInvalidCredentialsError()
+
+    simulateValidSubmit()
+    FormHelper.testMainError('Credenciais inválidas')
+    FormHelper.testUrl('/login')
+  })
+
+  it('Should save accessToken in localStorage', () => {
+    const accessToken = faker.datatype.uuid()
+    HTTPMock.mockOK(accessToken)
+
+    simulateValidSubmit()
+    cy.getByAriaLabel('spinner').should('exist')
+    FormHelper.testUrl('/')
+    FormHelper.testLocalStorageItem('accessToken', accessToken)
+  })
+
+  it('Should show UnexpectedError for other errors', () => {
+    HTTPMock.mockUnexpectedError()
+
+    simulateValidSubmit()
+    FormHelper.testMainError('Aconteceu algo de errado. Tente novamente mais tarde.')
+    FormHelper.testUrl('/login')
+  })
+
+  it('Should show UnexpectedError if invalid response is returned', () => {
+    HTTPMock.mockInvalidResponse()
+
+    simulateValidSubmit()
+    FormHelper.testMainError('Aconteceu algo de errado. Tente novamente mais tarde.')
+    FormHelper.testUrl('/login')
+  })
+
+  it('Should prevent multiple submits', () => {
+    HTTPMock.mockOK()
+
+    cy.getByName('email').focus().type(faker.internet.email())
+    cy.getByName('password').focus().type(faker.internet.password(5))
+    cy.get('button[type="submit"]').dblclick()
+    FormHelper.testHttpCallsCount(1)
+  })
+
+  it('Should not submit if form is invalid', () => {
+    HTTPMock.mockOK()
+
+    cy.getByName('email').focus().type(faker.internet.email()).type('{enter}')
+    FormHelper.testHttpCallsCount(0)
+  })
+})
