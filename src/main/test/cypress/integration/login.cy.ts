@@ -174,4 +174,19 @@ describe('Login', () => {
     cy.get('button[type="submit"]').dblclick()
     cy.get('@loginSuccess.all').should('have.length', 1)
   })
+
+  it('Should not submit if form is invalid', () => {
+    cy.intercept({
+      method: 'POST',
+      url: 'http://localhost:5050/api/login'
+    }, {
+      body: {
+        invalid: faker.random.word()
+      },
+      statusCode: 200
+    }).as('loginSuccess')
+
+    cy.getByName('email').focus().type(faker.internet.email()).type('{enter}')
+    cy.get('@loginSuccess.all').should('have.length', 0)
+  })
 })
