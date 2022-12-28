@@ -96,11 +96,23 @@ describe('Signup', () => {
     FormHelper.testUrl('/signup')
   })
 
-  it.only('Should show UnexpectedError if invalid response is returned', () => {
+  it('Should show UnexpectedError if invalid response is returned', () => {
     HTTPMock.mockInvalidResponse()
 
     simulateValidSubmit()
     FormHelper.testMainError('Aconteceu algo de errado. Tente novamente mais tarde.')
     FormHelper.testUrl('/signup')
+  })
+
+  it('Should prevent multiple submits', () => {
+    HTTPMock.mockOK()
+
+    cy.getByName('name').focus().type(faker.name.fullName())
+    cy.getByName('email').focus().type(faker.internet.email())
+    const password = faker.internet.password()
+    cy.getByName('password').focus().type(password)
+    cy.getByName('passwordConfirmation').focus().type(password)
+    cy.get('button[type="submit"]').dblclick()
+    FormHelper.testHttpCallsCount(1, 'signupSuccess')
   })
 })

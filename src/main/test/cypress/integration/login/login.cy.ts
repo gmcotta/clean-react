@@ -88,13 +88,13 @@ describe('Login', () => {
     cy.getByName('email').focus().type(faker.internet.email())
     cy.getByName('password').focus().type(faker.internet.password(5))
     cy.get('button[type="submit"]').dblclick()
-    FormHelper.testHttpCallsCount(1)
+    FormHelper.testHttpCallsCount(1, 'loginSuccess')
   })
 
   it('Should not submit if form is invalid', () => {
     HTTPMock.mockOK()
 
     cy.getByName('email').focus().type(faker.internet.email()).type('{enter}')
-    FormHelper.testHttpCallsCount(0)
+    FormHelper.testHttpCallsCount(0, 'loginSuccess')
   })
 })

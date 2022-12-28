@@ -14,8 +14,8 @@ export const testMainError = (errorMessage: string): void => {
   cy.getByAriaLabel('main-error').should('have.text', errorMessage)
 }
 
-export const testHttpCallsCount = (count: number): void => {
-  cy.get('@loginSuccess.all').should('have.length', count)
+export const testHttpCallsCount = (count: number, alias: string): void => {
+  cy.get(`@${alias}.all`).should('have.length', count)
 }
 
 export const testUrl = (path: string): void => {
