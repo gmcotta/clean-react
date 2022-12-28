@@ -1,21 +1,24 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2021": true,
+        "cypress/globals": true
     },
     "extends": [
         "plugin:react/recommended",
-        "standard-with-typescript"
+        "standard-with-typescript",
+        "plugin:cypress/recommended"
     ],
     "overrides": [
     ],
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module",
-        "project": "./tsconfig.json"
+        "project": ["./tsconfig.json", "./src/main/test/cypress/tsconfig.json"]
     },
     "plugins": [
-        "react"
+        "react",
+        "cypress"
     ],
     "settings": {
         "react": {
@@ -27,6 +30,8 @@
         "@typescript-eslint/strict-boolean-expressions": "off",
         "@typescript-eslint/prefer-nullish-coalescing": "off",
         "@typescript-eslint/no-misused-promises": "off",
+        "@typescript-eslint/triple-slash-reference": "off",
+        "@typescript-eslint/no-namespace": "off",
         "react/jsx-uses-react": "error",
         "react/jsx-uses-vars": "error"
     }

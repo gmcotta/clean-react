@@ -1,5 +1,5 @@
 import FormContext from '@/presentation/contexts/form/form-context'
-import React, { ChangeEvent, FC, FocusEvent, useContext } from 'react'
+import React, { ChangeEvent, FC, useContext } from 'react'
 
 import Styles from './input-styles.scss'
 import { InputProps } from './props'
@@ -8,10 +8,6 @@ const Input: FC<InputProps> = (props) => {
   const { state, setState } = useContext(FormContext)
   const errorMessage = state[`${props.name}Error`]
 
-  const enableInput = (event: FocusEvent<HTMLInputElement>): void => {
-    event.target.readOnly = false
-  }
-
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setState({
       ...state,
@@ -19,22 +15,19 @@ const Input: FC<InputProps> = (props) => {
     })
   }
 
-  const getAriaLabel = (): string => {
-    return `${props.name}-error-status`
-  }
-
-  const getStatus = (): string => {
-    return errorMessage ? '🔴' : '🟢'
-  }
-
-  const getTitle = (): string => {
-    return errorMessage || 'Tudo certo!'
-  }
-
   return (
-    <div className={Styles.inputWrap}>
-      <input {...props} readOnly onFocus={enableInput} onChange={handleChange} />
-      <span title={getTitle()} aria-label={getAriaLabel()} className={Styles.status}>{getStatus()}</span>
+    <div className={Styles.inputWrap} data-status={errorMessage ? 'invalid' : 'valid'} aria-label={`${props.name}-wrapper`}>
+      <input
+        {...props}
+        placeholder=" "
+        readOnly
+        onFocus={event => { event.target.readOnly = false }}
+        onChange={handleChange}
+        id={props.name}
+        aria-label={props.name}
+        title={errorMessage}
+      />
+      <label htmlFor={props.name} title={errorMessage} aria-label={`${props.name}-label`}>{props.placeholder}</label>
     </div>
   )
 }
