@@ -158,4 +158,21 @@ describe('Login', () => {
     })
     cy.url().should('eq', `${baseUrl}/login`)
   })
+
+  it('Should prevent multiple submits', () => {
+    cy.intercept({
+      method: 'POST',
+      url: 'http://localhost:5050/api/login'
+    }, {
+      body: {
+        invalid: faker.random.word()
+      },
+      statusCode: 200
+    }).as('loginSuccess')
+
+    cy.getByName('email').focus().type(faker.internet.email())
+    cy.getByName('password').focus().type(faker.internet.password(5))
+    cy.get('button[type="submit"]').dblclick()
+    cy.get('@loginSuccess.all').should('have.length', 1)
+  })
 })
