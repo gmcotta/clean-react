@@ -15,8 +15,8 @@ export const testElementTitle = (labelText: string, message: string): void => {
   expect(fieldErrorStatus.title).toBe(message)
 }
 
-export const populateField = (placeholderText: string, value: string): void => {
-  const input = screen.getByPlaceholderText(placeholderText)
+export const populateField = (labelText: string, value: string): void => {
+  const input = screen.getByLabelText(labelText)
   fireEvent.input(input, { target: { value } })
 }
 

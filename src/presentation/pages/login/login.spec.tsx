@@ -41,8 +41,8 @@ const makeSut = (params?: SutParams): SutTypes => {
 }
 
 const simulateValidSubmit = (email = faker.internet.email(), password = faker.internet.password()): void => {
-  FormHelper.populateField('Digite seu e-mail', email)
-  FormHelper.populateField('Digite sua senha', password)
+  FormHelper.populateField('email', email)
+  FormHelper.populateField('password', password)
   const submitButton = screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })
   fireEvent.click(submitButton)
 }
@@ -71,7 +71,7 @@ describe('<Login />', () => {
     it('Should show email error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      FormHelper.populateField('Digite seu e-mail', faker.internet.email())
+      FormHelper.populateField('email', faker.internet.email())
 
       FormHelper.testErrorStatus('email', errorMessage, '🔴')
     })
@@ -79,26 +79,26 @@ describe('<Login />', () => {
     it('Should show password error if Validation fails', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      FormHelper.populateField('Digite sua senha', faker.internet.password())
+      FormHelper.populateField('password', faker.internet.password())
       FormHelper.testErrorStatus('password', errorMessage, '🔴')
     })
 
     it('Should show valid email state if Validation succeeds', () => {
       makeSut()
-      FormHelper.populateField('Digite seu e-mail', faker.internet.email())
+      FormHelper.populateField('email', faker.internet.email())
       FormHelper.testErrorStatus('email', 'Tudo certo!', '🟢')
     })
 
     it('Should show valid password state if Validation succeeds', () => {
       makeSut()
-      FormHelper.populateField('Digite sua senha', faker.internet.password())
+      FormHelper.populateField('password', faker.internet.password())
       FormHelper.testErrorStatus('password', 'Tudo certo!', '🟢')
     })
 
     it('Should enable submit button if Validation succeeds', () => {
       makeSut()
-      FormHelper.populateField('Digite seu e-mail', faker.internet.email())
-      FormHelper.populateField('Digite sua senha', faker.internet.password())
+      FormHelper.populateField('email', faker.internet.email())
+      FormHelper.populateField('password', faker.internet.password())
       FormHelper.testButtonIsDisabled('Entrar', false)
     })
 
@@ -128,7 +128,7 @@ describe('<Login />', () => {
     it('Should not call Authentication if form is invalid', () => {
       const errorMessage = faker.random.words()
       const { authenticationSpy } = makeSut({ errorMessage })
-      FormHelper.populateField('Digite seu e-mail', faker.internet.email())
+      FormHelper.populateField('email', faker.internet.email())
       fireEvent.submit(screen.getByRole('form'))
       expect(authenticationSpy.callsCount).toBe(0)
     })
