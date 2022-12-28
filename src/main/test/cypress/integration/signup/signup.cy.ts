@@ -87,4 +87,12 @@ describe('Signup', () => {
     FormHelper.testUrl('/')
     FormHelper.testLocalStorageItem('accessToken', accessToken)
   })
+
+  it('Should show UnexpectedError for other errors', () => {
+    HTTPMock.mockUnexpectedError()
+
+    simulateValidSubmit()
+    FormHelper.testMainError('Aconteceu algo de errado. Tente novamente mais tarde.')
+    FormHelper.testUrl('/signup')
+  })
 })

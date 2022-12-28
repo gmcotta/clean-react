@@ -14,3 +14,9 @@ export const mockOK = (accessToken = faker.datatype.uuid()): void => HTTPHelper.
   },
   'loginSuccess'
 )
+
+export const mockUnexpectedError = (): void => HTTPHelper.mockUnexpectedError(
+  'POST',
+  'http://localhost:5050/api/signup',
+  'loginUnexpectedError'
+)
