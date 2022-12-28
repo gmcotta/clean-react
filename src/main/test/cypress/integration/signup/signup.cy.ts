@@ -3,12 +3,16 @@ import { faker } from '@faker-js/faker'
 import * as HTTPMock from '../signup/signup-mocks'
 import * as FormHelper from '../../support/form-helper'
 
-const simulateValidSubmit = (): void => {
+const populateForm = (): void => {
   cy.getByName('name').focus().type(faker.name.fullName())
   cy.getByName('email').focus().type(faker.internet.email())
   const password = faker.internet.password()
   cy.getByName('password').focus().type(password)
   cy.getByName('passwordConfirmation').focus().type(password)
+}
+
+const simulateValidSubmit = (): void => {
+  populateForm()
   cy.get('button[type="submit"]').click()
 }
 
@@ -107,11 +111,7 @@ describe('Signup', () => {
   it('Should prevent multiple submits', () => {
     HTTPMock.mockOK()
 
-    cy.getByName('name').focus().type(faker.name.fullName())
-    cy.getByName('email').focus().type(faker.internet.email())
-    const password = faker.internet.password()
-    cy.getByName('password').focus().type(password)
-    cy.getByName('passwordConfirmation').focus().type(password)
+    populateForm()
     cy.get('button[type="submit"]').dblclick()
     FormHelper.testHttpCallsCount(1, 'signupSuccess')
   })
