@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import * as FormHelper from '../../support/form-helper'
 
 describe('Signup', () => {
@@ -20,6 +21,23 @@ describe('Signup', () => {
 
     cy.get('button[type="submit"]').should('be.disabled').should('have.text', 'Cadastrar')
 
+    cy.getByAriaLabel('form-status').children().should('have.length', 0)
+  })
+
+  it('Should show error state if form is invalid', () => {
+    cy.getByName('name').focus().type(faker.random.alphaNumeric(4))
+    FormHelper.testInputStatus('name', 'Campo inválido')
+
+    cy.getByName('email').focus().type(faker.random.word())
+    FormHelper.testInputStatus('email', 'Campo inválido')
+
+    cy.getByName('password').focus().type(faker.internet.password(3))
+    FormHelper.testInputStatus('password', 'Campo inválido')
+
+    cy.getByName('passwordConfirmation').focus().type(faker.internet.password(4))
+    FormHelper.testInputStatus('passwordConfirmation', 'Campo inválido')
+
+    cy.get('button[type="submit"]').should('be.disabled').should('have.text', 'Cadastrar')
     cy.getByAriaLabel('form-status').children().should('have.length', 0)
   })
 })
