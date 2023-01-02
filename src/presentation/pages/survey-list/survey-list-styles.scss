@@ -98,6 +98,26 @@
           background-position: 0px 0px, 54px 0px;
           background-size: 50px 100%, 100% 100%;
           background-repeat: no-repeat;
+          position: relative;
+
+          .iconWrapper {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            
+            padding: 10px;
+            border-radius: 100%;
+            display: flex;
+            box-shadow: 0px 1px 3px -1px $black;
+
+            &.red {
+              background-color: $invalid;
+            }
+
+            &.green {
+              background-color: $valid;
+            }
+          }
 
           time {
             display: flex;
