@@ -1,4 +1,4 @@
-import { Logo, Footer } from '@/presentation/components'
+import { Footer, Header } from '@/presentation/components'
 import React, { FC } from 'react'
 
 import Styles from './survey-list-styles.scss'
@@ -6,15 +6,7 @@ import Styles from './survey-list-styles.scss'
 const SurveyList: FC = () => {
   return (
     <div className={Styles.surveyListWrapper}>
-      <header className={Styles.headerWrapper}>
-        <div className={Styles.headerContent}>
-          <Logo />
-          <div className={Styles.logoutWrapper}>
-            <span>Gustavo</span>
-            <a href="#">Sair</a>
-          </div>
-        </div>
-      </header>
+      <Header />
       <div className={Styles.contentWrapper}>
         <h2>Enquetes</h2>
         <ul>
