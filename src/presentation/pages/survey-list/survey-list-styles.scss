@@ -10,10 +10,9 @@
   .contentWrapper {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     align-self: center;
-    width: 100%;
     max-width: 800px;
+    width: 100%;
     flex-grow: 1;
     padding: 40px;
 
@@ -27,9 +26,9 @@
 
     ul {
       display: flex;
+      flex-direction: row;
       flex-wrap: wrap;
       justify-content: space-between;
-      width: 100%;
 
       li {
         height: 250px;
@@ -43,17 +42,18 @@
         box-shadow: 0px 1px 3px -1px $black;
 
         .surveyContent {
-          border-radius: 8px 8px 0px 0px;
           display: flex;
-          justify-content: space-between;
+          flex-direction: row;
+          border-radius: 8px 8px 0px 0px;
           align-items: center;
+          justify-content: space-between;
           flex-grow: 1;
-          background-image: 
+          background-repeat: no-repeat;
+          background-image:
             linear-gradient(to right, rgba($primaryLight, 0.1), rgba($primaryLight, 0.1)),
             linear-gradient(to right, $white, $white);
-          background-position: 0px 0px, 54px 0px;
-          background-size: 50px 100%, 100% 100%;
-          background-repeat: no-repeat;
+          background-position: 0 0, 54 0;
+          background-size: 54px 100%, 100% 100%;
           position: relative;
 
           .iconWrapper {
@@ -91,7 +91,7 @@
           p {
             font-size: 18px;
             margin: 24px;
-
+            flex-grow: 1;
           }
         }
         footer {
@@ -105,6 +105,24 @@
 
           &:hover {
             background-color: $primaryDark;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .surveyListWrapper {
+    .contentWrapper {
+      ul {
+        flex-direction: column;
+    
+        li {
+          flex-basis: 100%;
+
+          .surveyContent {
+            min-height: 200px;
           }
         }
       }
