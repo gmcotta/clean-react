@@ -103,8 +103,7 @@ describe('Signup', () => {
     FormHelper.testUrl('/signup')
   })
 
-  // TODO: ajustar esse teste
-  it.skip('Should show UnexpectedError if invalid response is returned', () => {
+  it('Should show UnexpectedError if invalid response is returned', () => {
     HTTPMock.mockInvalidResponse()
 
     simulateValidSubmit()
