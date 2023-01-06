@@ -59,26 +59,26 @@ describe('<Signup />', () => {
     it('Should not render spinner and error message on start', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      FormHelper.testChildCount('form-status', 0)
+      expect(screen.getByLabelText('form-status').children).toHaveLength(0)
     })
 
     it('Should render button disabled on start', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      FormHelper.testButtonIsDisabled('Cadastrar')
+      expect(screen.getByRole<HTMLButtonElement>('button', { name: /cadastrar/i })).toBeDisabled()
     })
 
     it('Should render input status errors on start', () => {
       const errorMessage = faker.random.word()
       makeSut({ errorMessage })
-      FormHelper.testElementTitle('name', errorMessage)
-      FormHelper.testElementTitle('name-label', errorMessage)
-      FormHelper.testElementTitle('email', errorMessage)
-      FormHelper.testElementTitle('email-label', errorMessage)
-      FormHelper.testElementTitle('password', errorMessage)
-      FormHelper.testElementTitle('password-label', errorMessage)
-      FormHelper.testElementTitle('passwordConfirmation', errorMessage)
-      FormHelper.testElementTitle('passwordConfirmation-label', errorMessage)
+      expect(screen.getByLabelText('name')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('name-label')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('email')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('email-label')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('password')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('password-label')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('passwordConfirmation')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('passwordConfirmation-label')).toHaveProperty('title', errorMessage)
     })
   })
 
@@ -141,13 +141,13 @@ describe('<Signup />', () => {
       FormHelper.populateField('email', faker.internet.email())
       FormHelper.populateField('password', faker.internet.password())
       FormHelper.populateField('passwordConfirmation', faker.internet.password())
-      FormHelper.testButtonIsDisabled('Cadastrar', false)
+      expect(screen.getByRole<HTMLButtonElement>('button', { name: /cadastrar/i })).toBeEnabled()
     })
 
     it('Should show spinner on submit', () => {
       makeSut()
       simulateValidSubmit()
-      FormHelper.testElementExists('spinner')
+      expect(screen.queryByLabelText('spinner')).toBeInTheDocument()
     })
   })
 
@@ -190,8 +190,8 @@ describe('<Signup />', () => {
         .mockRejectedValueOnce(error)
       simulateValidSubmit()
       await waitFor(async () => {
-        FormHelper.testElementTextContent('main-error', error.message)
-        FormHelper.testChildCount('form-status', 1)
+        expect(screen.getByLabelText('main-error')).toHaveTextContent(error.message)
+        expect(screen.getByLabelText('form-status').children).toHaveLength(1)
       })
     })
 
