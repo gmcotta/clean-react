@@ -16,7 +16,7 @@ const Icon: FC<Props> = ({ iconName, className }) => {
   const iconColor = iconName === IconName.thumbDown ? Styles.red : Styles.green
   return (
     <div className={[Styles.iconWrapper, iconColor, className].join(' ')}>
-      <img data-testid="icon" className={Styles.icon} src={iconName} alt="Thumb down" />
+      <img data-testid="icon" className={Styles.icon} src={iconName} alt="" />
     </div>
   )
 }
