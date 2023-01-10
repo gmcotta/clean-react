@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import Styles from './survey-item-empty-styles.scss'
+import Styles from './item-empty-styles.scss'
 
 const SurveyListEmpty: FC = () => {
   return (
