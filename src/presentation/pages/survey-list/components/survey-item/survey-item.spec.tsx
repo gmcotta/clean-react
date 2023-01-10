@@ -22,4 +22,18 @@ describe('SurveyItem', () => {
     expect(screen.getByTestId('month').textContent).toBe('jan')
     expect(screen.getByTestId('year').textContent).toBe('2023')
   })
+
+  it('Should render with thumb down icon and day with leading zero', () => {
+    const survey = Object.assign(mockSurveyModel(), {
+      didAnswer: false,
+      date: new Date('2019-05-03T00:00:00')
+    })
+    makeSut(survey)
+
+    expect(screen.getByTestId('icon')).toHaveProperty('src', IconName.thumbDown)
+    expect(screen.getByTestId('question')).toHaveTextContent(survey.question)
+    expect(screen.getByTestId('day').textContent).toBe('03')
+    expect(screen.getByTestId('month').textContent).toBe('mai')
+    expect(screen.getByTestId('year').textContent).toBe('2019')
+  })
 })
