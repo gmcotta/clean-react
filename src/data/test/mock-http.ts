@@ -11,7 +11,10 @@ export const mockPostRequest = (): HttpPostParams => ({
 })
 
 export const mockGetRequest = (): HttpGetParams => ({
-  url: faker.internet.url()
+  url: faker.internet.url(),
+  headers: {
+    [faker.database.column()]: faker.random.word()
+  }
 })
 
 export class HttpPostClientSpy<R> implements HttpPostClient<R> {
