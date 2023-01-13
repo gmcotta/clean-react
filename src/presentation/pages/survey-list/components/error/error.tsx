@@ -1,6 +1,8 @@
 import React, { FC, useContext } from 'react'
 import { SurveyContext } from '..'
 
+import Styles from './error-styles.scss'
+
 const Error: FC = () => {
   const { state, setState } = useContext(SurveyContext)
   const reload = (): void => {
@@ -8,7 +10,7 @@ const Error: FC = () => {
   }
 
   return (
-    <div>
+    <div className={Styles.errorWapper}>
       <span data-testid="error">{state.error}</span>
       <button onClick={reload} data-testid="reload">Tentar novamente</button>
     </div>
