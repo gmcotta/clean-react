@@ -4,12 +4,12 @@ import { createMemoryHistory } from '@remix-run/router'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
 
-import { AddAccountSpy, FormHelper, ValidationStub } from '@/presentation/test'
-
-import Signup from './signup'
 import { EmailInUseError } from '@/domain/errors'
-import { AccountModel } from '@/domain/models'
+import { AddAccount } from '@/domain/usecases'
+import { AddAccountSpy } from '@/domain/test'
 import { APIContext } from '@/presentation/contexts'
+import { FormHelper, ValidationStub } from '@/presentation/test'
+import Signup from './signup'
 
 const history = createMemoryHistory({ initialEntries: ['/signup'] })
 
@@ -19,7 +19,7 @@ type SutParams = {
 
 type SutTypes = {
   addAccountSpy: AddAccountSpy
-  setCurrentAccountMock: (account: AccountModel) => void
+  setCurrentAccountMock: (account: AddAccount.Model) => void
 }
 
 const makeSut = (params?: SutParams): SutTypes => {
