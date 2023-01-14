@@ -71,4 +71,10 @@ describe('AuthorizeHttpGetClientDecorator', () => {
       field: httpRequest.headers.field
     })
   })
+
+  it('Should return the same result as HttpGetClient', async () => {
+    const { sut, httpGetClientSpy } = makeSut()
+    const httpResponse = await sut.get(mockGetRequest())
+    expect(httpResponse).toStrictEqual(httpGetClientSpy.response)
+  })
 })
