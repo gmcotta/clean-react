@@ -1,5 +1,3 @@
-const BASE_URL = Cypress.config().baseUrl
-
 export const testInputStatus = (fieldName: string, errorMessage?: string): void => {
   cy.getByAriaLabel(`${fieldName}-wrapper`)
     .should('have.attr', 'data-status', errorMessage ? 'invalid' : 'valid')
@@ -12,16 +10,4 @@ export const testInputStatus = (fieldName: string, errorMessage?: string): void 
 export const testMainError = (errorMessage: string): void => {
   cy.getByAriaLabel('spinner').should('not.exist')
   cy.getByAriaLabel('main-error').should('have.text', errorMessage)
-}
-
-export const testHttpCallsCount = (count: number, alias: string): void => {
-  cy.get(`@${alias}.all`).should('have.length', count)
-}
-
-export const testUrl = (path: string): void => {
-  cy.url().should('eq', `${BASE_URL}${path}`)
-}
-
-export const testLocalStorageItem = (key: string, value: string): void => {
-  cy.window().then(window => assert.equal(value, window.localStorage.getItem(key)))
 }

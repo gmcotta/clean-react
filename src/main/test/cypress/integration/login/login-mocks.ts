@@ -1,12 +1,12 @@
 import { faker } from '@faker-js/faker'
 import * as HTTPHelper from '../../support/http-mocks'
 
-export const mockInvalidCredentialsError = (): void => HTTPHelper.mockInvalidCredentialsError(
+export const mockInvalidCredentialsError = (): void => HTTPHelper.mockUnauthorizedError(
   'http://localhost:5050/api/login',
   'loginInvalidCredentials'
 )
 
-export const mockUnexpectedError = (): void => HTTPHelper.mockUnexpectedError(
+export const mockUnexpectedError = (): void => HTTPHelper.mockServerError(
   'POST',
   'http://localhost:5050/api/login',
   'loginUnexpectedError'
@@ -20,14 +20,4 @@ export const mockOK = (account = { accessToken: faker.datatype.uuid(), name: fak
     name: account.name
   },
   'loginSuccess'
-)
-
-export const mockInvalidResponse = (): void => HTTPHelper.mockOK(
-  'POST',
-  'http://localhost:5050/api/login',
-  {
-    invalid: faker.random.word(),
-    invalid2: faker.random.words(2)
-  },
-  'loginInvalidResponse'
 )

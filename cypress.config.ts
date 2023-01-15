@@ -8,7 +8,8 @@ export default defineConfig({
     baseUrl: "http://localhost:8080",
     supportFolder: "src/main/test/cypress/support",
     supportFile: "src/main/test/cypress/support/e2e.ts",
-    specPattern: "src/main/test/cypress/integration/**/*.cy.{js,jsx,ts,tsx}"
+    specPattern: "src/main/test/cypress/integration/**/*.cy.{js,jsx,ts,tsx}",
+    experimentalRunAllSpecs: true
   },
   fixturesFolder: "src/main/test/cypress/fixtures",
   screenshotsFolder: "src/main/test/cypress/screenshots",
