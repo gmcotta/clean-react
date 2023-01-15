@@ -5,3 +5,9 @@ export const mockUnexpectedError = (): void => HTTPHelper.mockServerError(
   /surveys/,
   'surveyListUnexpectedError'
 )
+
+export const mockAccessDeniedError = (): void => HTTPHelper.mockForbiddenError(
+  'GET',
+  /surveys/,
+  'surveyListAccessDeniedError'
+)
