@@ -21,6 +21,7 @@ declare global {
     interface Chainable {
       getByAriaLabel: (ariaLabel: string) => Chainable<JQuery<HTMLElement>>
       getByName: (name: string) => Chainable<JQuery<HTMLElement>>
+      getByTestId: (name: string) => Chainable<JQuery<HTMLElement>>
     }
   }
 }

@@ -41,3 +41,6 @@ Cypress.Commands.add('getByAriaLabel', (ariaLabel: string) => {
 Cypress.Commands.add('getByName', (name: string) => {
   return cy.get(`[name="${name}"]`)
 })
+Cypress.Commands.add('getByTestId', (name: string) => {
+  return cy.get(`[data-testid="${name}"]`)
+})
