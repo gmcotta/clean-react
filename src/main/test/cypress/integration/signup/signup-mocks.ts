@@ -6,11 +6,12 @@ export const mockEmailInUseError = (): void => HTTPHelper.mockEmailInUseError(
   'signupEmailInUse'
 )
 
-export const mockOK = (accessToken = faker.datatype.uuid()): void => HTTPHelper.mockOK(
+export const mockOK = (account = { accessToken: faker.datatype.uuid(), name: faker.name.firstName() }): void => HTTPHelper.mockOK(
   'POST',
   'http://localhost:5050/api/signup',
   {
-    accessToken
+    accessToken: account.accessToken,
+    name: account.name
   },
   'signupSuccess'
 )

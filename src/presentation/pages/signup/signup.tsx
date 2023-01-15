@@ -1,9 +1,9 @@
-import React, { FC, FormEvent, useEffect, useState } from 'react'
+import React, { FC, FormEvent, useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-import { AddAccount, SaveAccessToken } from '@/domain/usecases'
+import { AddAccount } from '@/domain/usecases'
 import { Footer, FormStatus, Input, LoginHeader, SubmitButton } from '@/presentation/components'
-import FormContext from '@/presentation/contexts/form/form-context'
+import { APIContext, FormContext } from '@/presentation/contexts'
 import { Validation } from '@/presentation/protocols/validation'
 
 import Styles from './signup-styles.scss'
@@ -11,10 +11,11 @@ import Styles from './signup-styles.scss'
 type SignupProps = {
   validation: Validation
   addAccount: AddAccount
-  saveAccessToken: SaveAccessToken
 }
 
-const Signup: FC<SignupProps> = ({ validation, addAccount, saveAccessToken }) => {
+const Signup: FC<SignupProps> = ({ validation, addAccount }) => {
+  const { setCurrentAccount } = useContext(APIContext)
+
   const navigate = useNavigate()
 
   const [state, setState] = useState({
@@ -61,7 +62,7 @@ const Signup: FC<SignupProps> = ({ validation, addAccount, saveAccessToken }) =>
         password: state.password,
         passwordConfirmation: state.passwordConfirmation
       })
-      await saveAccessToken.save(account.accessToken)
+      setCurrentAccount(account)
       navigate('/', { replace: true })
     } catch (error) {
       setState({ ...state, isLoading: false, mainError: error.message })
@@ -69,7 +70,7 @@ const Signup: FC<SignupProps> = ({ validation, addAccount, saveAccessToken }) =>
   }
 
   return (
-    <div className={Styles.signup}>
+    <div className={Styles.signupWrapper}>
       <LoginHeader />
       <FormContext.Provider value={{ state, setState }}>
         <form role="form" className={Styles.form} onSubmit={handleSubmit}>

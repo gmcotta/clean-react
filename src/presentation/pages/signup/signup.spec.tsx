@@ -4,10 +4,12 @@ import { createMemoryHistory } from '@remix-run/router'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
 
-import { AddAccountSpy, FormHelper, SaveAccessTokenMock, ValidationStub } from '@/presentation/test'
-
-import Signup from './signup'
 import { EmailInUseError } from '@/domain/errors'
+import { AddAccount } from '@/domain/usecases'
+import { AddAccountSpy } from '@/domain/test'
+import { APIContext } from '@/presentation/contexts'
+import { FormHelper, ValidationStub } from '@/presentation/test'
+import Signup from './signup'
 
 const history = createMemoryHistory({ initialEntries: ['/signup'] })
 
@@ -17,28 +19,29 @@ type SutParams = {
 
 type SutTypes = {
   addAccountSpy: AddAccountSpy
-  saveAccessTokenMock: SaveAccessTokenMock
+  setCurrentAccountMock: (account: AddAccount.Model) => void
 }
 
 const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
   validationStub.errorMessage = params?.errorMessage
   const addAccountSpy = new AddAccountSpy()
-  const saveAccessTokenMock = new SaveAccessTokenMock()
+  const setCurrentAccountMock = jest.fn()
 
   render(
-    <Router location={history.location} navigator={history}>
-      <Signup
-        validation={validationStub}
-        addAccount={addAccountSpy}
-        saveAccessToken={saveAccessTokenMock}
-      />
-    </Router>
+    <APIContext.Provider value={{ setCurrentAccount: setCurrentAccountMock }}>
+      <Router location={history.location} navigator={history}>
+        <Signup
+          validation={validationStub}
+          addAccount={addAccountSpy}
+        />
+      </Router>
+    </APIContext.Provider>
   )
 
   return {
     addAccountSpy,
-    saveAccessTokenMock
+    setCurrentAccountMock
   }
 }
 
@@ -56,26 +59,26 @@ describe('<Signup />', () => {
     it('Should not render spinner and error message on start', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      FormHelper.testChildCount('form-status', 0)
+      expect(screen.getByLabelText('form-status').children).toHaveLength(0)
     })
 
     it('Should render button disabled on start', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      FormHelper.testButtonIsDisabled('Cadastrar')
+      expect(screen.getByRole<HTMLButtonElement>('button', { name: /cadastrar/i })).toBeDisabled()
     })
 
     it('Should render input status errors on start', () => {
       const errorMessage = faker.random.word()
       makeSut({ errorMessage })
-      FormHelper.testElementTitle('name', errorMessage)
-      FormHelper.testElementTitle('name-label', errorMessage)
-      FormHelper.testElementTitle('email', errorMessage)
-      FormHelper.testElementTitle('email-label', errorMessage)
-      FormHelper.testElementTitle('password', errorMessage)
-      FormHelper.testElementTitle('password-label', errorMessage)
-      FormHelper.testElementTitle('passwordConfirmation', errorMessage)
-      FormHelper.testElementTitle('passwordConfirmation-label', errorMessage)
+      expect(screen.getByLabelText('name')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('name-label')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('email')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('email-label')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('password')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('password-label')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('passwordConfirmation')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('passwordConfirmation-label')).toHaveProperty('title', errorMessage)
     })
   })
 
@@ -138,13 +141,13 @@ describe('<Signup />', () => {
       FormHelper.populateField('email', faker.internet.email())
       FormHelper.populateField('password', faker.internet.password())
       FormHelper.populateField('passwordConfirmation', faker.internet.password())
-      FormHelper.testButtonIsDisabled('Cadastrar', false)
+      expect(screen.getByRole<HTMLButtonElement>('button', { name: /cadastrar/i })).toBeEnabled()
     })
 
     it('Should show spinner on submit', () => {
       makeSut()
       simulateValidSubmit()
-      FormHelper.testElementExists('spinner')
+      expect(screen.queryByLabelText('spinner')).toBeInTheDocument()
     })
   })
 
@@ -187,29 +190,18 @@ describe('<Signup />', () => {
         .mockRejectedValueOnce(error)
       simulateValidSubmit()
       await waitFor(async () => {
-        FormHelper.testElementTextContent('main-error', error.message)
-        FormHelper.testChildCount('form-status', 1)
+        expect(screen.getByLabelText('main-error')).toHaveTextContent(error.message)
+        expect(screen.getByLabelText('form-status').children).toHaveLength(1)
       })
     })
 
-    it('Should call SaveAccessToken on success', async () => {
-      const { addAccountSpy, saveAccessTokenMock } = makeSut()
+    it('Should call UpdateCurrentAccount on success', async () => {
+      const { addAccountSpy, setCurrentAccountMock } = makeSut()
       simulateValidSubmit()
       await waitFor(() => {
-        expect(saveAccessTokenMock.accessToken).toBe(addAccountSpy.account.accessToken)
+        expect(setCurrentAccountMock).toHaveBeenCalledWith(addAccountSpy.account)
         expect(history.index).toBe(0)
         expect(history.location.pathname).toBe('/')
-      })
-    })
-
-    it('Should present error if SaveAccessToken fails', async () => {
-      const { saveAccessTokenMock } = makeSut()
-      const error = new EmailInUseError()
-      jest.spyOn(saveAccessTokenMock, 'save').mockRejectedValueOnce(error)
-      simulateValidSubmit()
-      await waitFor(async () => {
-        FormHelper.testElementTextContent('main-error', error.message)
-        FormHelper.testChildCount('form-status', 1)
       })
     })
 

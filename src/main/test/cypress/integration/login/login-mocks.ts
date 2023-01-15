@@ -12,11 +12,12 @@ export const mockUnexpectedError = (): void => HTTPHelper.mockUnexpectedError(
   'loginUnexpectedError'
 )
 
-export const mockOK = (accessToken = faker.datatype.uuid()): void => HTTPHelper.mockOK(
+export const mockOK = (account = { accessToken: faker.datatype.uuid(), name: faker.name.firstName() }): void => HTTPHelper.mockOK(
   'POST',
   'http://localhost:5050/api/login',
   {
-    accessToken
+    accessToken: account.accessToken,
+    name: account.name
   },
   'loginSuccess'
 )
@@ -25,7 +26,8 @@ export const mockInvalidResponse = (): void => HTTPHelper.mockOK(
   'POST',
   'http://localhost:5050/api/login',
   {
-    invalid: faker.random.word()
+    invalid: faker.random.word(),
+    invalid2: faker.random.words(2)
   },
   'loginInvalidResponse'
 )

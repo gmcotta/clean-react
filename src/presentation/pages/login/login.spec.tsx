@@ -4,13 +4,16 @@ import { createMemoryHistory } from '@remix-run/router'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
 
-import { AuthenticationSpy, SaveAccessTokenMock, ValidationStub, FormHelper } from '@/presentation/test'
 import { InvalidCredentialsError } from '@/domain/errors'
+import { Authentication } from '@/domain/usecases'
+import { AuthenticationSpy } from '@/domain/test'
+import { APIContext } from '@/presentation/contexts'
+import { ValidationStub, FormHelper } from '@/presentation/test'
 import Login from './login'
 
 type SutTypes = {
   authenticationSpy: AuthenticationSpy
-  saveAccessTokenMock: SaveAccessTokenMock
+  setCurrentAccountMock: (account: Authentication.Model) => void
 }
 
 type SutParams = {
@@ -23,20 +26,21 @@ const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
   validationStub.errorMessage = params?.errorMessage
   const authenticationSpy = new AuthenticationSpy()
-  const saveAccessTokenMock = new SaveAccessTokenMock()
+  const setCurrentAccountMock = jest.fn()
 
   render(
-    <Router location={history.location} navigator={history}>
-      <Login
-        validation={validationStub}
-        authentication={authenticationSpy}
-        saveAccessToken={saveAccessTokenMock}
-      />
-    </Router>
+      <APIContext.Provider value={{ setCurrentAccount: setCurrentAccountMock }}>
+        <Router location={history.location} navigator={history}>
+          <Login
+            validation={validationStub}
+            authentication={authenticationSpy}
+            />
+        </Router>
+      </APIContext.Provider>
   )
   return {
     authenticationSpy,
-    saveAccessTokenMock
+    setCurrentAccountMock
   }
 }
 
@@ -51,21 +55,21 @@ describe('<Login />', () => {
   describe('start', () => {
     it('Should not render spinner and error message on start', () => {
       makeSut()
-      FormHelper.testChildCount('form-status', 0)
+      expect(screen.getByLabelText('form-status').children).toHaveLength(0)
     })
 
     it('Should render button disabled on start', () => {
       makeSut({ errorMessage: faker.random.words() })
-      FormHelper.testButtonIsDisabled('Entrar')
+      expect(screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })).toBeDisabled()
     })
 
     it('Should render input status errors on start', () => {
       const errorMessage = faker.random.words()
       makeSut({ errorMessage })
-      FormHelper.testElementTitle('email', errorMessage)
-      FormHelper.testElementTitle('email-label', errorMessage)
-      FormHelper.testElementTitle('password', errorMessage)
-      FormHelper.testElementTitle('password-label', errorMessage)
+      expect(screen.getByLabelText('email')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('email-label')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('password')).toHaveProperty('title', errorMessage)
+      expect(screen.getByLabelText('password-label')).toHaveProperty('title', errorMessage)
     })
   })
 
@@ -101,13 +105,13 @@ describe('<Login />', () => {
       makeSut()
       FormHelper.populateField('email', faker.internet.email())
       FormHelper.populateField('password', faker.internet.password())
-      FormHelper.testButtonIsDisabled('Entrar', false)
+      expect(screen.getByRole<HTMLButtonElement>('button', { name: /entrar/i })).toBeEnabled()
     })
 
     it('Should show spinner on submit', () => {
       makeSut()
       simulateValidSubmit()
-      FormHelper.testElementExists('spinner')
+      expect(screen.queryByLabelText('spinner')).toBeInTheDocument()
     })
   })
 
@@ -143,29 +147,18 @@ describe('<Login />', () => {
         .mockRejectedValueOnce(error)
       simulateValidSubmit()
       await waitFor(async () => {
-        FormHelper.testElementTextContent('main-error', error.message)
-        FormHelper.testChildCount('form-status', 1)
+        expect(screen.getByLabelText('main-error')).toHaveTextContent(error.message)
+        expect(screen.getByLabelText('form-status').children).toHaveLength(1)
       })
     })
 
-    it('Should call SaveAccessToken on success', async () => {
-      const { authenticationSpy, saveAccessTokenMock } = makeSut()
+    it('Should call UpdateCurrentAccount on success', async () => {
+      const { authenticationSpy, setCurrentAccountMock } = makeSut()
       simulateValidSubmit()
       await waitFor(() => {
-        expect(saveAccessTokenMock.accessToken).toBe(authenticationSpy.account.accessToken)
+        expect(setCurrentAccountMock).toHaveBeenCalledWith(authenticationSpy.account)
         expect(history.index).toBe(0)
         expect(history.location.pathname).toBe('/')
-      })
-    })
-
-    it('Should present error if SaveAccessToken fails', async () => {
-      const { saveAccessTokenMock } = makeSut()
-      const error = new InvalidCredentialsError()
-      jest.spyOn(saveAccessTokenMock, 'save').mockRejectedValueOnce(error)
-      simulateValidSubmit()
-      await waitFor(async () => {
-        FormHelper.testElementTextContent('main-error', error.message)
-        FormHelper.testChildCount('form-status', 1)
       })
     })
 
