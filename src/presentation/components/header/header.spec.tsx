@@ -3,20 +3,24 @@ import { Router } from 'react-router-dom'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { createMemoryHistory, MemoryHistory } from '@remix-run/router'
 
+import { AccountModel } from '@/domain/models'
+import { mockAccountModel } from '@/domain/test'
 import { APIContext } from '@/presentation/contexts'
 import Header from './header'
-import { AccountModel } from '@/domain/models'
 
 type SutTypes = {
   history: MemoryHistory
   setCurrentAccountMock: (account: AccountModel) => void
 }
 
-const makeSut = (): SutTypes => {
+const makeSut = (account = mockAccountModel()): SutTypes => {
   const history = createMemoryHistory({ initialEntries: ['/'] })
   const setCurrentAccountMock = jest.fn()
   render(
-      <APIContext.Provider value={{ setCurrentAccount: setCurrentAccountMock }}>
+      <APIContext.Provider value={{
+        setCurrentAccount: setCurrentAccountMock,
+        getCurrentAccount: () => account
+      }}>
         <Router location={history.location} navigator={history}>
           <Header />
         </Router>
@@ -35,5 +39,11 @@ describe('<Header />', () => {
     fireEvent.click(screen.getByTestId('logout'))
     expect(setCurrentAccountMock).toHaveBeenCalledWith(undefined)
     expect(history.location.pathname).toBe('/login')
+  })
+
+  it('Should render username correctly', () => {
+    const account = mockAccountModel()
+    makeSut(account)
+    expect(screen.getByTestId('username')).toHaveTextContent(account.name)
   })
 })
