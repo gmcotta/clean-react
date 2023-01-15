@@ -6,7 +6,7 @@ import Logo from '../logo/logo'
 import Styles from './header-styles.scss'
 
 const Header: FC = () => {
-  const { setCurrentAccount } = useContext(APIContext)
+  const { getCurrentAccount, setCurrentAccount } = useContext(APIContext)
   const navigate = useNavigate()
 
   const logout = (event: MouseEvent<HTMLAnchorElement>): void => {
@@ -20,7 +20,7 @@ const Header: FC = () => {
         <div className={Styles.headerContent}>
           <Logo />
           <div className={Styles.logoutWrapper}>
-            <span>Gustavo</span>
+            <span data-testid="username">{getCurrentAccount().name}</span>
             <a data-testid="logout" href="#" onClick={logout}>Sair</a>
           </div>
         </div>
