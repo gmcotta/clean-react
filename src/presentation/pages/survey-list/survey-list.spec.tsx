@@ -1,16 +1,27 @@
 import React from 'react'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { Router } from 'react-router-dom'
+import { createMemoryHistory } from '@remix-run/router'
 
-import SurveyList from './survey-list'
 import { LoadSurveyListSpy } from '@/domain/test'
 import { UnexpectedError } from '@/domain/errors'
+import { APIContext } from '@/presentation/contexts'
+import SurveyList from './survey-list'
 
 type SutTypes = {
   loadSurveyListSpy: LoadSurveyListSpy
 }
 
+const history = createMemoryHistory({ initialEntries: ['/'] })
+
 const makeSut = (loadSurveyListSpy = new LoadSurveyListSpy()): SutTypes => {
-  render(<SurveyList loadSurveyList={loadSurveyListSpy} />)
+  render(
+    <APIContext.Provider value={{ setCurrentAccount: jest.fn() }}>
+      <Router location={history.location} navigator={history}>
+        <SurveyList loadSurveyList={loadSurveyListSpy} />
+      </Router>
+    </APIContext.Provider>
+  )
   return { loadSurveyListSpy }
 }
 
