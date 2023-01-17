@@ -14,6 +14,13 @@ const mockAccessDeniedError = (): void => HTTPHelper.mockForbiddenError(
   'surveyListAccessDeniedError'
 )
 
+const mockSuccess = (surveyList?: any): void => HTTPHelper.mockOK(
+  'GET',
+  path,
+  surveyList || [],
+  'surveyListAccessSuccess'
+)
+
 describe('SurveyList', () => {
   beforeEach(() => {
     cy.fixture('account').then(account => {
@@ -45,5 +52,32 @@ describe('SurveyList', () => {
     cy.visit('/')
     cy.getByTestId('logout').click()
     Helpers.testUrl('/login')
+  })
+
+  it('Should show survey items', () => {
+    cy.fixture('survey-list').then(list => {
+      mockSuccess(list)
+      cy.visit('/')
+      cy.get('li:empty').should('have.length', 4)
+      cy.get('li:not(:empty)').should('have.length', 2)
+      cy.get('li:first-child').then(li => {
+        assert.equal(li.find('[data-testid="day"]').text(), '16')
+        assert.equal(li.find('[data-testid="month"]').text(), 'jan')
+        assert.equal(li.find('[data-testid="year"]').text(), '2023')
+        assert.equal(li.find('[data-testid="question"]').text(), 'Question 1')
+        cy.fixture('icons').then(icon => {
+          assert.equal(li.find('[data-testid="icon"]').attr('src'), icon.thumbUp)
+        })
+      })
+      cy.get('li:nth-child(2)').then(li => {
+        assert.equal(li.find('[data-testid="day"]').text(), '09')
+        assert.equal(li.find('[data-testid="month"]').text(), 'dez')
+        assert.equal(li.find('[data-testid="year"]').text(), '2022')
+        assert.equal(li.find('[data-testid="question"]').text(), 'Question 2')
+        cy.fixture('icons').then(icon => {
+          assert.equal(li.find('[data-testid="icon"]').attr('src'), icon.thumbDown)
+        })
+      })
+    })
   })
 })
