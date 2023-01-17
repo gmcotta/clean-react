@@ -33,21 +33,32 @@ const Signup: FC<SignupProps> = ({ validation, addAccount }) => {
   })
 
   useEffect(() => {
-    const nameError = validation.validate('name', state)
-    const emailError = validation.validate('email', state)
-    const passwordError = validation.validate('password', state)
-    const passwordConfirmationError = validation.validate('passwordConfirmation', state)
-    const isFormInvalid = !!nameError || !!emailError || !!passwordError || !!passwordConfirmationError
+    validate('name')
+  }, [state.name])
 
-    setState({
-      ...state,
-      nameError,
-      emailError,
-      passwordError,
-      passwordConfirmationError,
-      isFormInvalid
-    })
-  }, [state.name, state.email, state.password, state.passwordConfirmation])
+  useEffect(() => {
+    validate('email')
+  }, [state.email])
+
+  useEffect(() => {
+    validate('password')
+  }, [state.password])
+
+  useEffect(() => {
+    validate('passwordConfirmation')
+  }, [state.passwordConfirmation])
+
+  const validate = (field: string): void => {
+    const error = validation.validate(field, state)
+    setState(prevState => ({ ...prevState, [`${field}Error`]: error }))
+    setState(prevState => ({
+      ...prevState,
+      isFormInvalid: !!prevState.nameError ||
+        !!prevState.emailError ||
+        !!prevState.passwordError ||
+        !!prevState.passwordConfirmationError
+    }))
+  }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
     try {
