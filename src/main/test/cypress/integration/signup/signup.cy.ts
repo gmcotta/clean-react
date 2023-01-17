@@ -1,8 +1,28 @@
 import { faker } from '@faker-js/faker'
 
-import * as HTTPMock from '../signup/signup-mocks'
-import * as Helper from '../../support/helpers'
-import * as FormHelper from '../../support/form-helpers'
+import * as FormHelper from '../../utils/form-helpers'
+import * as Helper from '../../utils/helpers'
+import * as HTTPHelper from '../../utils/http-mocks'
+
+const path = /signup/
+const mockEmailInUseError = (): void => HTTPHelper.mockForbiddenError(
+  'POST',
+  path,
+  'signupEmailInUse'
+)
+
+const mockSuccess = (account?: any): void => HTTPHelper.mockOK(
+  'POST',
+  path,
+  account || {},
+  'signupSuccess'
+)
+
+const mockUnexpectedError = (): void => HTTPHelper.mockServerError(
+  'POST',
+  path,
+  'signupUnexpectedError'
+)
 
 const populateForm = (): void => {
   cy.getByName('name').focus().type(faker.name.fullName())
@@ -76,7 +96,7 @@ describe('Signup', () => {
   })
 
   it('Should show EmailInUseError if status code is 403', () => {
-    HTTPMock.mockEmailInUseError()
+    mockEmailInUseError()
 
     simulateValidSubmit()
     FormHelper.testMainError('E-mail já está em uso')
@@ -84,20 +104,18 @@ describe('Signup', () => {
   })
 
   it('Should save accessToken in localStorage', () => {
-    const account = {
-      accessToken: faker.datatype.uuid(),
-      name: faker.name.firstName()
-    }
-    HTTPMock.mockOK(account)
+    cy.fixture('account').then(account => {
+      mockSuccess(account)
 
-    simulateValidSubmit()
-    cy.getByAriaLabel('spinner').should('exist')
-    Helper.testUrl('/')
-    Helper.testLocalStorageItem('account', JSON.stringify(account))
+      simulateValidSubmit()
+      cy.getByAriaLabel('spinner').should('exist')
+      Helper.testUrl('/')
+      Helper.testLocalStorageItem('account', JSON.stringify(account))
+    })
   })
 
   it('Should show UnexpectedError for other errors', () => {
-    HTTPMock.mockUnexpectedError()
+    mockUnexpectedError()
 
     simulateValidSubmit()
     FormHelper.testMainError('Aconteceu algo de errado. Tente novamente mais tarde.')
@@ -105,7 +123,7 @@ describe('Signup', () => {
   })
 
   it('Should prevent multiple submits', () => {
-    HTTPMock.mockOK()
+    mockSuccess()
 
     populateForm()
     cy.get('button[type="submit"]').dblclick()
@@ -113,7 +131,7 @@ describe('Signup', () => {
   })
 
   it('Should not submit if form is invalid', () => {
-    HTTPMock.mockOK()
+    mockSuccess()
 
     cy.getByName('email').focus().type(faker.internet.email()).type('{enter}')
     Helper.testHttpCallsCount(0, 'signupSuccess')
