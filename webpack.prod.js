@@ -33,6 +33,7 @@ module.exports = merge(common, {
     ]
   },
   externals: {
+    axios: 'axios',
     react: 'React',
     'react-dom': 'ReactDOM'
   },
