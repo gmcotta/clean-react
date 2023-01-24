@@ -32,6 +32,7 @@ module.exports = merge(common, {
     ]
   },
   devServer: {
+    port: 8080,
     static: './dist',
     devMiddleware: {
       writeToDisk: true

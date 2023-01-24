@@ -92,7 +92,9 @@ describe('Login', () => {
   it('Should prevent multiple submits', () => {
     mockSuccess()
     populateForm()
-    cy.get('button[type="submit"]').dblclick()
+    cy.get('button[type="submit"]').click()
+    cy.wait('@loginSuccess')
+    cy.get('button[type="submit"]').click({ force: true })
     Helper.testHttpCallsCount(1, 'loginSuccess')
   })
 

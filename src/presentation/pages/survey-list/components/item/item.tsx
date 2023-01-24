@@ -27,7 +27,7 @@ const SurveyItem: FC<Props> = ({ survey }) => {
         </time>
         <p data-testid="question">{survey.question}</p>
       </div>
-      <footer>Ver Resultado</footer>
+      <footer className={Styles.itemFooter}>Ver Resultado</footer>
     </li>
   )
 }

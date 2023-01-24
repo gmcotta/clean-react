@@ -19,8 +19,8 @@ jobs:
       - run: npm install
       - run: npx eslint 'src/**'
   
-  unit_tests:
-    name: Unit Tests
+  tests:
+    name: Unit and Integration Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -33,3 +33,4 @@ jobs:
       - uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm run test:cypress:ci

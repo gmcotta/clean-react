@@ -9,7 +9,9 @@ export default defineConfig({
     supportFolder: "src/main/test/cypress/support",
     supportFile: "src/main/test/cypress/support/e2e.ts",
     specPattern: "src/main/test/cypress/integration/**/*.cy.{js,jsx,ts,tsx}",
-    experimentalRunAllSpecs: true
+    experimentalRunAllSpecs: true,
+    video: false,
+    screenshotOnRunFailure: false
   },
   fixturesFolder: "src/main/test/cypress/fixtures",
   screenshotsFolder: "src/main/test/cypress/screenshots",
