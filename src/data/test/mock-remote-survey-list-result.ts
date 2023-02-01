@@ -10,11 +10,13 @@ export const mockRemoteSurveyResultModel = (): RemoteLoadSurveyListResult.Model 
       image: faker.image.abstract(),
       answer: faker.random.words(),
       count: Number(faker.random.numeric(2)),
-      percent: Number(faker.random.numeric(2))
+      percent: Number(faker.random.numeric(2)),
+      isCurrentAccountAnswer: faker.datatype.boolean()
     },
     {
       answer: faker.random.words(),
       count: Number(faker.random.numeric(2)),
-      percent: Number(faker.random.numeric(2))
+      percent: Number(faker.random.numeric(2)),
+      isCurrentAccountAnswer: faker.datatype.boolean()
     }]
 })
