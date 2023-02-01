@@ -16,6 +16,12 @@ export class RemoteLoadSurveyList implements LoadSurveyList {
         date: new Date(remoteSurvey.date)
       }))
       case HttpStatusCode.noContent: return []
+      // case HttpStatusCode.noContent: return [{
+      //   date: new Date(),
+      //   didAnswer: false,
+      //   id: '1',
+      //   question: 'Teste'
+      // }]
       case HttpStatusCode.forbidden: throw new AccessDeniedError()
       default: throw new UnexpectedError()
     }
