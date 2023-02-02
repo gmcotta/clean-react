@@ -9,10 +9,10 @@ const Input: FC<InputProps> = (props) => {
   const errorMessage = state[`${props.name}Error`]
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
-    setState({
-      ...state,
+    setState(prevState => ({
+      ...prevState,
       [event.target.name]: event.target.value
-    })
+    }))
   }
 
   return (

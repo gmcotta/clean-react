@@ -49,12 +49,12 @@ const Login: FC<LoginProps> = ({ validation, authentication }) => {
       if (state.isLoading || state.isFormInvalid) {
         return
       }
-      setState({ ...state, isLoading: true })
+      setState(prevState => ({ ...prevState, isLoading: true }))
       const account = await authentication.auth({ email: state.email, password: state.password })
       setCurrentAccount(account)
       navigate('/', { replace: true })
     } catch (error) {
-      setState({ ...state, isLoading: false, mainError: error.message })
+      setState(prevState => ({ ...state, isLoading: false, mainError: error.message }))
     }
   }
 
