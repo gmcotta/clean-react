@@ -8,6 +8,7 @@ import {
   makeSignup as MakeSignup
 } from '@/main/factories/pages'
 import { APIContext } from '@/presentation/contexts'
+import { PrivateRoute } from '@/presentation/components'
 
 const Router: FC = () => {
   return (
@@ -19,7 +20,13 @@ const Router: FC = () => {
         <Routes>
           <Route path="/login" element={<MakeLogin />} />
           <Route path="/signup" element={<MakeSignup />} />
-          <Route path="/" element={<MakeSurveyList />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <MakeSurveyList />
+              </PrivateRoute>
+            } />
         </Routes>
       </BrowserRouter>
     </APIContext.Provider>
