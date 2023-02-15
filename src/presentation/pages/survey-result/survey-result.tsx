@@ -10,7 +10,7 @@ const SurveyResult: FC = () => {
     <div className={Styles.surveyResultWrapper}>
       <Header />
       <div className={Styles.contentWrapper}>
-        {false &&
+        {true &&
           <>
             <hgroup>
               <Calendar date={new Date()} className={Styles.calendarWrapper} />
