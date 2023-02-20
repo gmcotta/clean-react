@@ -15,11 +15,11 @@ const mockSuccess = (surveyResult?: any): void => HTTPHelper.mockOK(
   'surveyResultAccessSuccess'
 )
 
-// const mockAccessDeniedError = (): void => HTTPHelper.mockForbiddenError(
-//   'GET',
-//   path,
-//   'surveyResultAccessDeniedError'
-// )
+const mockAccessDeniedError = (): void => HTTPHelper.mockForbiddenError(
+  'GET',
+  path,
+  'surveyResultAccessDeniedError'
+)
 
 describe('SurveyResult', () => {
   beforeEach(() => {
@@ -45,11 +45,11 @@ describe('SurveyResult', () => {
     })
   })
 
-  // it('Should logout on AccessDeniedError', () => {
-  //   // mockAccessDeniedError()
-  //   cy.visit('/surveys/1')
-  //   Helpers.testUrl('/login')
-  // })
+  it('Should logout on AccessDeniedError', () => {
+    mockAccessDeniedError()
+    cy.visit('/surveys/any_id')
+    Helpers.testUrl('/login')
+  })
 
   // it('Should show correct username on header', () => {
   //   mockUnexpectedError()
