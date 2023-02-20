@@ -1,9 +1,10 @@
-import React, { FC } from 'react'
+import React, { FC, Fragment } from 'react'
 import FlipMove from 'react-flip-move'
 import { useNavigate } from 'react-router-dom'
 
 import { LoadSurveyResult } from '@/domain/usecases'
 import { Calendar } from '@/presentation/components'
+import { SurveyResultDataAnswer } from '@/presentation/pages/survey-result/components'
 import Styles from './result-styles.scss'
 
 type Props = {
@@ -25,11 +26,9 @@ const Result: FC<Props> = ({ surveyResult }) => {
       </hgroup>
       <FlipMove data-testid="answers" className={Styles.answerList}>
         {surveyResult.answers.map(answer => (
-          <li data-testid="answer-wrapper" key={answer.answer} className={answer.isCurrentAccountAnswer ? Styles.active : ''}>
-            {!!answer.image && <img data-testid="image" src={answer.image} alt={answer.answer} />}
-            <span data-testid="answer" className={Styles.answer}>{answer.answer}</span>
-            <span data-testid="percent" className={Styles.percent}>{answer.percent}%</span>
-          </li>
+          <Fragment key={answer.answer}>
+            <SurveyResultDataAnswer answer={answer} />
+          </Fragment>
         ))}
       </FlipMove>
       <button className={Styles.button} data-testid="back-button" onClick={handleBack}>Voltar</button>
