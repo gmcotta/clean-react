@@ -1,22 +1,27 @@
 import React from 'react'
 import { Router } from 'react-router-dom'
-import { createMemoryHistory } from '@remix-run/router'
+import { createMemoryHistory, MemoryHistory } from '@remix-run/router'
 import { render, screen, waitFor } from '@testing-library/react'
 
+import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
+import { AccountModel } from '@/domain/models'
 import { LoadSurveyResultSpy, mockAccountModel, mockSurveyResultModel } from '@/domain/test'
 import { APIContext } from '@/presentation/contexts'
+
 import SurveyResult from './survey-result'
-import { UnexpectedError } from '@/domain/errors'
 
 type SutTypes = {
   loadSurveyResultSpy: LoadSurveyResultSpy
+  history: MemoryHistory
+  setCurrentAccountMock: (account: AccountModel) => void
 }
 
 const makeSut = (loadSurveyResultSpy = new LoadSurveyResultSpy()): SutTypes => {
   const history = createMemoryHistory({ initialEntries: ['/surveys'] })
+  const setCurrentAccountMock = jest.fn()
   render(
     <APIContext.Provider value={{
-      setCurrentAccount: jest.fn(),
+      setCurrentAccount: setCurrentAccountMock,
       getCurrentAccount: () => mockAccountModel()
     }}>
       <Router location={history.location} navigator={history}>
@@ -25,7 +30,9 @@ const makeSut = (loadSurveyResultSpy = new LoadSurveyResultSpy()): SutTypes => {
     </APIContext.Provider>
   )
   return {
-    loadSurveyResultSpy
+    loadSurveyResultSpy,
+    history,
+    setCurrentAccountMock
   }
 }
 
@@ -85,5 +92,16 @@ describe('SurveyResult', () => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument()
       expect(screen.queryByTestId('error')).toHaveTextContent(error.message)
     })
+  })
+
+  it('Should logout on AccessDeniedError', async () => {
+    const loadSurveyResultSpy = new LoadSurveyResultSpy()
+    const error = new AccessDeniedError()
+    jest.spyOn(loadSurveyResultSpy, 'load').mockRejectedValueOnce(error)
+    const { history, setCurrentAccountMock } = makeSut(loadSurveyResultSpy)
+    await waitFor(() => {
+      expect(setCurrentAccountMock).toHaveBeenCalledWith(undefined)
+    })
+    expect(history.location.pathname).toBe('/login')
   })
 })
