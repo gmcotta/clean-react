@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import FlipMove from 'react-flip-move'
+import { useNavigate } from 'react-router-dom'
 
 import { LoadSurveyResult } from '@/domain/usecases'
 import { Calendar, Error, Footer, Header, Loading } from '@/presentation/components'
@@ -18,6 +19,7 @@ const SurveyResult: FC<Props> = ({ loadSurveyResult }) => {
     surveyResult: null as LoadSurveyResult.Model,
     reload: false
   })
+  const navigate = useNavigate()
 
   const handleError = useErrorHandler((error: Error) => {
     setState(oldValue => ({
@@ -45,6 +47,10 @@ const SurveyResult: FC<Props> = ({ loadSurveyResult }) => {
     }))
   }
 
+  const handleBack = (): void => {
+    navigate(-1)
+  }
+
   return (
     <div className={Styles.surveyResultWrapper}>
       <Header />
@@ -64,7 +70,7 @@ const SurveyResult: FC<Props> = ({ loadSurveyResult }) => {
                 </li>
               ))}
             </FlipMove>
-            <button>Voltar</button>
+            <button data-testid="back-button" onClick={handleBack}>Voltar</button>
           </>
         }
         {state.isLoading && <Loading />}
