@@ -30,7 +30,7 @@ export const mockServerError = (method: 'POST' | 'GET', url: RegExp | string, al
     url
   }, {
     body: {
-      body: faker.random.word()
+      error: faker.random.word()
     },
     statusCode: faker.helpers.arrayElement([400, 404, 500])
   }).as(alias)
