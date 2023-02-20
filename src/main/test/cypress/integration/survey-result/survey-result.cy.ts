@@ -51,44 +51,27 @@ describe('SurveyResult', () => {
     Helpers.testUrl('/login')
   })
 
-  // it('Should show correct username on header', () => {
-  //   mockUnexpectedError()
-  //   cy.visit('/surveys/any_id')
-  //   const { name } = Helpers.getLocalStorageItem('account')
-  //   cy.getByTestId('username').should('contain.text', name)
-  // })
-
-  // it('Should logout when logout link is clicked', () => {
-  //   mockUnexpectedError()
-  //   cy.visit('/surveys/any_id')
-  //   cy.getByTestId('logout').click()
-  //   Helpers.testUrl('/login')
-  // })
-
-  // it('Should show survey items', () => {
-  //   cy.fixture('survey-result').then(list => {
-  //     mockSuccess(list)
-  //     cy.visit('/surveys/any_id')
-  //     cy.get('li:empty').should('have.length', 4)
-  //     cy.get('li:not(:empty)').should('have.length', 2)
-  //     cy.get('li:first-child').then(li => {
-  //       assert.equal(li.find('[data-testid="day"]').text(), '16')
-  //       assert.equal(li.find('[data-testid="month"]').text(), 'jan')
-  //       assert.equal(li.find('[data-testid="year"]').text(), '2023')
-  //       assert.equal(li.find('[data-testid="question"]').text(), 'Question 1')
-  //       cy.fixture('icons').then(icon => {
-  //         assert.equal(li.find('[data-testid="icon"]').attr('src'), icon.thumbUp)
-  //       })
-  //     })
-  //     cy.get('li:nth-child(2)').then(li => {
-  //       assert.equal(li.find('[data-testid="day"]').text(), '09')
-  //       assert.equal(li.find('[data-testid="month"]').text(), 'dez')
-  //       assert.equal(li.find('[data-testid="year"]').text(), '2022')
-  //       assert.equal(li.find('[data-testid="question"]').text(), 'Question 2')
-  //       cy.fixture('icons').then(icon => {
-  //         assert.equal(li.find('[data-testid="icon"]').attr('src'), icon.thumbDown)
-  //       })
-  //     })
-  //   })
-  // })
+  it.only('Should show survey result', () => {
+    cy.fixture('survey-result').then(result => {
+      mockSuccess(result)
+      cy.visit('/surveys/any_id')
+      cy.getByTestId('day').should('have.text', '20')
+      cy.getByTestId('month').should('have.text', 'fev')
+      cy.getByTestId('year').should('have.text', '2023')
+      cy.getByTestId('question').should('have.text', 'Pergunta')
+      cy.get('li:nth-child(1)').then(li => {
+        assert.equal(
+          li.find('[data-testid="image"]').attr('src'),
+          'https://picsum.photos/200'
+        )
+        assert.equal(li.find('[data-testid="answer"]').text(), 'Sim')
+        assert.equal(li.find('[data-testid="percent"]').text(), '51%')
+      })
+      cy.get('li:nth-child(2)').then(li => {
+        assert.notExists(li.find('[data-testid="image"]'))
+        assert.equal(li.find('[data-testid="answer"]').text(), 'Não')
+        assert.equal(li.find('[data-testid="percent"]').text(), '49%')
+      })
+    })
+  })
 })
