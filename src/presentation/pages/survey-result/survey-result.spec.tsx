@@ -1,12 +1,12 @@
 import React from 'react'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory, MemoryHistory } from '@remix-run/router'
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
 import { AccountModel } from '@/domain/models'
-import { LoadSurveyResultSpy, mockAccountModel, mockSurveyResultModel } from '@/domain/test'
 import { APIContext } from '@/presentation/contexts'
+import { LoadSurveyResultSpy, mockAccountModel, mockSurveyResultModel } from '@/domain/test'
 
 import SurveyResult from './survey-result'
 
@@ -103,5 +103,17 @@ describe('SurveyResult', () => {
       expect(setCurrentAccountMock).toHaveBeenCalledWith(undefined)
     })
     expect(history.location.pathname).toBe('/login')
+  })
+
+  it('Should call LoadSurveyResult on reload', async () => {
+    const loadSurveyResultSpy = new LoadSurveyResultSpy()
+    const error = new UnexpectedError()
+    jest.spyOn(loadSurveyResultSpy, 'load').mockRejectedValueOnce(error)
+    makeSut(loadSurveyResultSpy)
+    await waitFor(() => {
+      fireEvent.click(screen.getByTestId('reload'))
+    })
+    expect(loadSurveyResultSpy.callsCount).toBe(1)
+    await waitFor(() => screen.getByRole('heading'))
   })
 })
