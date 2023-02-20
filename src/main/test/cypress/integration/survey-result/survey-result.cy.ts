@@ -51,7 +51,7 @@ describe('SurveyResult', () => {
     Helpers.testUrl('/login')
   })
 
-  it.only('Should show survey result', () => {
+  it('Should show survey result', () => {
     cy.fixture('survey-result').then(result => {
       mockSuccess(result)
       cy.visit('/surveys/any_id')
@@ -72,6 +72,16 @@ describe('SurveyResult', () => {
         assert.equal(li.find('[data-testid="answer"]').text(), 'Não')
         assert.equal(li.find('[data-testid="percent"]').text(), '49%')
       })
+    })
+  })
+
+  it('Should go back to SurveyList when back button is clicked', () => {
+    cy.fixture('survey-result').then(result => {
+      cy.visit('/')
+      mockSuccess(result)
+      cy.visit('/surveys/any_id')
+      cy.getByTestId('back-button').click()
+      Helpers.testUrl('/')
     })
   })
 })
