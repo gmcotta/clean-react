@@ -6,15 +6,14 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { LoadSurveyResultSpy, mockAccountModel, mockSurveyResultModel } from '@/domain/test'
 import { APIContext } from '@/presentation/contexts'
 import SurveyResult from './survey-result'
+import { UnexpectedError } from '@/domain/errors'
 
 type SutTypes = {
   loadSurveyResultSpy: LoadSurveyResultSpy
 }
 
-const makeSut = (surveyResult = mockSurveyResultModel()): SutTypes => {
+const makeSut = (loadSurveyResultSpy = new LoadSurveyResultSpy()): SutTypes => {
   const history = createMemoryHistory({ initialEntries: ['/surveys'] })
-  const loadSurveyResultSpy = new LoadSurveyResultSpy()
-  loadSurveyResultSpy.survey = surveyResult
   render(
     <APIContext.Provider value={{
       setCurrentAccount: jest.fn(),
@@ -47,10 +46,13 @@ describe('SurveyResult', () => {
   })
 
   it('Shoud show SurveyResult data on success', async () => {
+    const loadSurveyResultSpy = new LoadSurveyResultSpy()
     const surveyResult = Object.assign(mockSurveyResultModel(), {
       date: new Date('2023-02-18T00:00:00')
     })
-    makeSut(surveyResult)
+    loadSurveyResultSpy.survey = surveyResult
+    makeSut(loadSurveyResultSpy)
+
     await waitFor(() => {
       expect(screen.getByTestId('day').textContent).toBe('18')
       expect(screen.getByTestId('month').textContent).toBe('fev')
@@ -70,6 +72,18 @@ describe('SurveyResult', () => {
       const activeAnswers = screen.queryAllByTestId('answer-wrapper')
       expect(activeAnswers[0]).toHaveClass('active')
       expect(activeAnswers[1]).not.toHaveClass('active')
+    })
+  })
+
+  it('Should render error on UnexpectedError', async () => {
+    const loadSurveyResultSpy = new LoadSurveyResultSpy()
+    const error = new UnexpectedError()
+    jest.spyOn(loadSurveyResultSpy, 'load').mockRejectedValueOnce(error)
+    makeSut(loadSurveyResultSpy)
+    await waitFor(() => {
+      expect(screen.queryByTestId('question')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('error')).toHaveTextContent(error.message)
     })
   })
 })
