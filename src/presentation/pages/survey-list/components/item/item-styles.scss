@@ -90,6 +90,10 @@
   cursor: pointer;
   border-radius: 0px 0px 8px 8px;
 
+  a {
+    all: unset;
+  }
+
   &:hover {
     background-color: $primaryDark;
   }

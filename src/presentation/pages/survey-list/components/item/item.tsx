@@ -18,11 +18,11 @@ const SurveyItem: FC<Props> = ({ survey }) => {
         <Calendar date={survey.date} className={Styles.calendarWrapper} />
         <p data-testid="question">{survey.question}</p>
       </div>
-      <footer className={Styles.itemFooter}>
-        <Link data-testid="link" to={`/surveys/${survey.id}`}>
-          Ver Resultado
-        </Link>
-      </footer>
+      <Link data-testid="link" to={`/surveys/${survey.id}`}>
+        <footer className={Styles.itemFooter}>
+            Ver Resultado
+        </footer>
+      </Link>
     </li>
   )
 }

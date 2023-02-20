@@ -5,7 +5,7 @@ import { makeAPIUrl } from '@/main/factories/http'
 
 export const makeRemoteLoadSurveyResult = (id: string): LoadSurveyResult => {
   return new RemoteLoadSurveyListResult(
-    makeAPIUrl(`/surveys/${id}/result`),
+    makeAPIUrl(`/surveys/${id}/results`),
     makeAuthorizeHttpGetClientDecorator()
   )
 }
