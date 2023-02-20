@@ -8,17 +8,17 @@ const mockUnexpectedError = (): void => HTTPHelper.mockServerError(
   'surveyResultUnexpectedError'
 )
 
+const mockSuccess = (surveyResult?: any): void => HTTPHelper.mockOK(
+  'GET',
+  path,
+  surveyResult || {},
+  'surveyResultAccessSuccess'
+)
+
 // const mockAccessDeniedError = (): void => HTTPHelper.mockForbiddenError(
 //   'GET',
 //   path,
 //   'surveyResultAccessDeniedError'
-// )
-
-// const mockSuccess = (surveyResult?: any): void => HTTPHelper.mockOK(
-//   'GET',
-//   path,
-//   surveyResult || {},
-//   'surveyResultAccessSuccess'
 // )
 
 describe('SurveyResult', () => {
@@ -34,16 +34,16 @@ describe('SurveyResult', () => {
     cy.getByTestId('error').should('contain.text', 'Aconteceu algo de errado. Tente novamente mais tarde.')
   })
 
-  // it('Should reload on button click', () => {
-  //   mockUnexpectedError()
-  //   cy.visit('/surveys/any_id')
-  //   cy.getByTestId('error').should('contain.text', 'Aconteceu algo de errado. Tente novamente mais tarde.')
-  //   cy.fixture('survey-list').then(list => {
-  //     mockSuccess(list)
-  //     cy.getByTestId('reload').click()
-  //     cy.get('li:not(:empty)').should('have.length', 2)
-  //   })
-  // })
+  it('Should reload on button click', () => {
+    mockUnexpectedError()
+    cy.visit('/surveys/any_id')
+    cy.getByTestId('error').should('contain.text', 'Aconteceu algo de errado. Tente novamente mais tarde.')
+    cy.fixture('survey-result').then(result => {
+      mockSuccess(result)
+      cy.getByTestId('reload').click()
+      cy.getByTestId('question').should('exist')
+    })
+  })
 
   // it('Should logout on AccessDeniedError', () => {
   //   // mockAccessDeniedError()
