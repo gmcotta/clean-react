@@ -15,20 +15,35 @@ const SurveyResult: FC<Props> = ({ loadSurveyResult }) => {
   const [state, setState] = useState({
     isLoading: false,
     error: '',
-    surveyResult: null as LoadSurveyResult.Model
+    surveyResult: null as LoadSurveyResult.Model,
+    reload: false
   })
 
   const handleError = useErrorHandler((error: Error) => {
-    setState(oldValue => ({ ...oldValue, surveyResult: null, error: error.message }))
+    setState(oldValue => ({
+      ...oldValue,
+      surveyResult: null,
+      error: error.message
+    }))
   })
 
   useEffect(() => {
     loadSurveyResult.load()
-      .then(survey => setState(oldValue => ({ ...oldValue, surveyResult: survey })))
+      .then(survey => setState(oldValue => ({
+        ...oldValue,
+        surveyResult: survey
+      })))
       .catch(handleError)
-  }, [])
+  }, [state.reload])
 
-  const reload = (): void => {}
+  const reload = (): void => {
+    setState(oldvalue => ({
+      surveyResult: null,
+      error: '',
+      reload: !oldvalue.reload,
+      isLoading: false
+    }))
+  }
 
   return (
     <div className={Styles.surveyResultWrapper}>
