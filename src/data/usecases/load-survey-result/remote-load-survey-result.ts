@@ -1,13 +1,16 @@
-import { HttpGetClient, HttpStatusCode } from '@/data/protocols/http'
+import { HttpClient, HttpStatusCode } from '@/data/protocols/http'
 import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
 import { LoadSurveyResult } from '@/domain/usecases'
 // import { faker } from '@faker-js/faker'
 
 export class RemoteLoadSurveyListResult {
-  constructor (private readonly url: string, private readonly httpGetClient: HttpGetClient<RemoteLoadSurveyListResult.Model>) {}
+  constructor (private readonly url: string, private readonly httpClient: HttpClient<RemoteLoadSurveyListResult.Model>) {}
 
   async load (): Promise<LoadSurveyResult.Model> {
-    const httpResponse = await this.httpGetClient.get({ url: this.url })
+    const httpResponse = await this.httpClient.request({
+      url: this.url,
+      method: 'get'
+    })
     const remoteSurveyListResult = httpResponse.body
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok: return { ...remoteSurveyListResult, date: new Date(remoteSurveyListResult.date) }
