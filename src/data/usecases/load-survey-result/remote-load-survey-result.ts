@@ -4,19 +4,19 @@ import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
 import { LoadSurveyResult } from '@/domain/usecases'
 // import { faker } from '@faker-js/faker'
 
-export class RemoteLoadSurveyListResult {
-  constructor (private readonly url: string, private readonly httpClient: HttpClient<RemoteLoadSurveyListResult.Model>) {}
+export class RemoteLoadSurveyResult {
+  constructor (private readonly url: string, private readonly httpClient: HttpClient<RemoteLoadSurveyResult.Model>) {}
 
   async load (): Promise<LoadSurveyResult.Model> {
     const httpResponse = await this.httpClient.request({
       url: this.url,
       method: 'get'
     })
-    const remoteSurveyListResult = httpResponse.body
+    const remoteSurveyResult = httpResponse.body
     switch (httpResponse.statusCode) {
       case HttpStatusCode.ok: return {
-        ...remoteSurveyListResult,
-        date: new Date(remoteSurveyListResult.date)
+        ...remoteSurveyResult,
+        date: new Date(remoteSurveyResult.date)
       }
       // case HttpStatusCode.serverError: return {
       //   question: faker.random.words(10),
@@ -42,6 +42,6 @@ export class RemoteLoadSurveyListResult {
   }
 }
 
-export namespace RemoteLoadSurveyListResult {
+export namespace RemoteLoadSurveyResult {
   export type Model = RemoteSurveyResultModel
 }
