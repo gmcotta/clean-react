@@ -127,4 +127,13 @@ describe('SurveyResult', () => {
     })
     expect(history.location.pathname).toBe('/')
   })
+
+  it('Should not show Loading on active answer click', async () => {
+    makeSut()
+    await waitFor(() => {
+      const answersWrapper = screen.queryAllByTestId('answer-wrapper')
+      fireEvent.click(answersWrapper[0])
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument()
+    })
+  })
 })
