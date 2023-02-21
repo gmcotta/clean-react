@@ -1,5 +1,7 @@
 import { faker } from '@faker-js/faker'
 
+type HttpMethods = 'POST' | 'GET' | 'PUT'
+
 export const mockUnauthorizedError = (url: RegExp | string, alias: string): void => {
   cy.intercept({
     method: 'POST',
@@ -12,7 +14,7 @@ export const mockUnauthorizedError = (url: RegExp | string, alias: string): void
   }).as(alias)
 }
 
-export const mockForbiddenError = (method: 'POST' | 'GET', url: RegExp | string, alias: string): void => {
+export const mockForbiddenError = (method: HttpMethods, url: RegExp | string, alias: string): void => {
   cy.intercept({
     method,
     url
@@ -24,7 +26,7 @@ export const mockForbiddenError = (method: 'POST' | 'GET', url: RegExp | string,
   }).as(alias)
 }
 
-export const mockServerError = (method: 'POST' | 'GET', url: RegExp | string, alias: string): void => {
+export const mockServerError = (method: HttpMethods, url: RegExp | string, alias: string): void => {
   cy.intercept({
     method,
     url
@@ -36,7 +38,7 @@ export const mockServerError = (method: 'POST' | 'GET', url: RegExp | string, al
   }).as(alias)
 }
 
-export const mockOK = (method: 'POST' | 'GET', url: RegExp | string, body: any, alias: string): void => {
+export const mockOK = (method: HttpMethods, url: RegExp | string, body: any, alias: string): void => {
   cy.intercept({
     method,
     url
