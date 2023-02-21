@@ -15,7 +15,7 @@ const Result: FC<Props> = ({ surveyResult }) => {
   const navigate = useNavigate()
 
   const handleBack = (): void => {
-    navigate(-1)
+    navigate('/')
   }
 
   return (

@@ -1,3 +1,4 @@
+import { RemoteSurveyResultModel } from '@/data/models'
 import { HttpClient, HttpStatusCode } from '@/data/protocols/http'
 import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
 import { LoadSurveyResult } from '@/domain/usecases'
@@ -39,15 +40,5 @@ export class RemoteLoadSurveyListResult {
 }
 
 export namespace RemoteLoadSurveyListResult {
-  export type Model = {
-    question: string
-    date: string
-    answers: Array<{
-      image?: string
-      answer: string
-      count: number
-      percent: number
-      isCurrentAccountAnswer: boolean
-    }>
-  }
+  export type Model = RemoteSurveyResultModel
 }
