@@ -34,3 +34,12 @@ export class LoadSurveyResultSpy implements LoadSurveyResult {
     return this.survey
   }
 }
+
+export class SaveSurveyResultSpy implements SaveSurveyResult {
+  params: SaveSurveyResult.Params
+  survey = mockSurveyResultModel()
+  async save (params: SaveSurveyResult.Params): Promise<SaveSurveyResult.Model> {
+    this.params = params
+    return this.survey
+  }
+}
