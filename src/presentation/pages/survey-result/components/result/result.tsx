@@ -1,5 +1,4 @@
 import React, { FC, Fragment } from 'react'
-import FlipMove from 'react-flip-move'
 import { useNavigate } from 'react-router-dom'
 
 import { LoadSurveyResult } from '@/domain/usecases'
@@ -20,13 +19,13 @@ const Result: FC<Props> = ({ surveyResult }) => {
         <Calendar date={surveyResult.date} className={Styles.calendarWrapper} />
         <h2 data-testid="question">{surveyResult.question}</h2>
       </hgroup>
-      <FlipMove data-testid="answers" className={Styles.answerList}>
+      <ul data-testid="answers" className={Styles.answerList}>
         {surveyResult.answers.map(answer => (
           <Fragment key={answer.answer}>
             <SurveyResultDataAnswer answer={answer} />
           </Fragment>
         ))}
-      </FlipMove>
+      </ul>
       <button
         className={Styles.button}
         data-testid="back-button"
