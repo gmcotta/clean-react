@@ -167,7 +167,7 @@ describe('SurveyResult', () => {
     })
   })
 
-  it('Should throw UnexpectedError when non-active answer is clicked', async () => {
+  it('Should show error when non-active answer is clicked and throws UnexpectedError', async () => {
     const saveSurveyResultSpy = new SaveSurveyResultSpy()
     const error = new UnexpectedError()
     jest.spyOn(saveSurveyResultSpy, 'save').mockRejectedValueOnce(error)
@@ -181,5 +181,20 @@ describe('SurveyResult', () => {
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument()
       expect(screen.queryByTestId('error')).toHaveTextContent(error.message)
     })
+  })
+
+  it('Should logout when non-active answer is clicked and throws AccessDeniedError', async () => {
+    const saveSurveyResultSpy = new SaveSurveyResultSpy()
+    const error = new AccessDeniedError()
+    jest.spyOn(saveSurveyResultSpy, 'save').mockRejectedValueOnce(error)
+    const { history, setCurrentAccountMock } = makeSut({ saveSurveyResultSpy })
+    await waitFor(() => {
+      const answersWrapper = screen.queryAllByTestId('answer-wrapper')
+      fireEvent.click(answersWrapper[1])
+    })
+    await waitFor(() => {
+      expect(setCurrentAccountMock).toHaveBeenCalledWith(undefined)
+    })
+    expect(history.location.pathname).toBe('/login')
   })
 })
