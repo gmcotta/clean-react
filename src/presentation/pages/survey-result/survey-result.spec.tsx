@@ -166,4 +166,20 @@ describe('SurveyResult', () => {
       })
     })
   })
+
+  it('Should throw UnexpectedError when non-active answer is clicked', async () => {
+    const saveSurveyResultSpy = new SaveSurveyResultSpy()
+    const error = new UnexpectedError()
+    jest.spyOn(saveSurveyResultSpy, 'save').mockRejectedValueOnce(error)
+    makeSut({ saveSurveyResultSpy })
+    await waitFor(() => {
+      const answersWrapper = screen.queryAllByTestId('answer-wrapper')
+      fireEvent.click(answersWrapper[1])
+    })
+    await waitFor(() => {
+      expect(screen.queryByTestId('question')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('loading')).not.toBeInTheDocument()
+      expect(screen.queryByTestId('error')).toHaveTextContent(error.message)
+    })
+  })
 })
