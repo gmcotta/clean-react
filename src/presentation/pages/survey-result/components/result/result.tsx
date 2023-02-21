@@ -14,10 +14,6 @@ type Props = {
 const Result: FC<Props> = ({ surveyResult }) => {
   const navigate = useNavigate()
 
-  const handleBack = (): void => {
-    navigate('/')
-  }
-
   return (
     <>
       <hgroup>
@@ -31,7 +27,13 @@ const Result: FC<Props> = ({ surveyResult }) => {
           </Fragment>
         ))}
       </FlipMove>
-      <button className={Styles.button} data-testid="back-button" onClick={handleBack}>Voltar</button>
+      <button
+        className={Styles.button}
+        data-testid="back-button"
+        onClick={() => navigate('/')}
+      >
+        Voltar
+      </button>
     </>
   )
 }
