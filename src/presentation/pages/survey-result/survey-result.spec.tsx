@@ -199,7 +199,6 @@ describe('SurveyResult', () => {
     expect(history.location.pathname).toBe('/login')
   })
 
-  // TODO: Verificar porque mockando 4 items ao invés de 2 (aula 112)
   it('Shoud show SurveyResult data on SaveSurveyResult success', async () => {
     const saveSurveyResultSpy = new SaveSurveyResultSpy()
     const surveyResult = Object.assign(mockSurveyResultModel(), {
@@ -233,6 +232,21 @@ describe('SurveyResult', () => {
       expect(activeAnswers[0]).toHaveClass('active')
       expect(activeAnswers[1]).not.toHaveClass('active')
       expect(screen.queryByTestId('loading')).not.toBeInTheDocument()
+    })
+  })
+
+  it('Should prevent multiple answer click', async () => {
+    const saveSurveyResultSpy = new SaveSurveyResultSpy()
+    makeSut({ saveSurveyResultSpy })
+
+    await waitFor(() => {
+      const answersWrapper = screen.queryAllByTestId('answer-wrapper')
+      fireEvent.click(answersWrapper[1])
+      fireEvent.click(answersWrapper[1])
+    })
+
+    await waitFor(() => {
+      expect(saveSurveyResultSpy.callsCount).toBe(1)
     })
   })
 })
