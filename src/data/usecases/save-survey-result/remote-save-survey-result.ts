@@ -2,7 +2,7 @@
 
 import { RemoteSurveyResultModel } from '@/data/models'
 import { HttpClient, HttpStatusCode } from '@/data/protocols/http'
-import { AccessDeniedError } from '@/domain/errors'
+import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
 import { SaveSurveyResult } from '@/domain/usecases'
 
 export class RemoteSaveSurveyResult implements SaveSurveyResult {
@@ -18,6 +18,7 @@ export class RemoteSaveSurveyResult implements SaveSurveyResult {
       body: params
     })
     switch (httpResponse.statusCode) {
+      case HttpStatusCode.ok: return null
       // case HttpStatusCode.serverError: return {
       //   question: faker.random.words(10),
       //   date: new Date(),
@@ -37,7 +38,7 @@ export class RemoteSaveSurveyResult implements SaveSurveyResult {
       //     }]
       // }
       case HttpStatusCode.forbidden: throw new AccessDeniedError()
-      default: return null
+      default: throw new UnexpectedError()
     }
   }
 }
