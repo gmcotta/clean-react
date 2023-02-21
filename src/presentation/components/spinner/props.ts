@@ -1,3 +1,5 @@
 import { HTMLAttributes } from 'react'
 
-export type SpinnerProps = HTMLAttributes<HTMLElement>
+export type SpinnerProps = HTMLAttributes<HTMLElement> & {
+  isNegative?: boolean
+}

@@ -66,7 +66,7 @@ const Signup: FC<SignupProps> = ({ validation, addAccount }) => {
       if (state.isLoading || state.isFormInvalid) {
         return
       }
-      setState({ ...state, isLoading: true })
+      setState(prevState => ({ ...prevState, isLoading: true }))
       const account = await addAccount.add({
         name: state.name,
         email: state.email,
@@ -76,7 +76,7 @@ const Signup: FC<SignupProps> = ({ validation, addAccount }) => {
       setCurrentAccount(account)
       navigate('/', { replace: true })
     } catch (error) {
-      setState({ ...state, isLoading: false, mainError: error.message })
+      setState(prevState => ({ ...state, isLoading: false, mainError: error.message }))
     }
   }
 
