@@ -61,7 +61,7 @@ describe('RemoteLoadSurveyResult', () => {
     await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
-  it('Should return a SurveyReturn on 200', async () => {
+  it('Should return a SurveyResult on 200', async () => {
     const httpResult = mockRemoteSurveyResultModel()
     const { sut, httpClientSpy } = makeSut()
 
