@@ -25,7 +25,8 @@ const SurveyResult: FC<Props> = ({ loadSurveyResult, saveSurveyResult }) => {
     setState(oldValue => ({
       ...oldValue,
       surveyResult: null,
-      error: error.message
+      error: error.message,
+      isLoading: false
     }))
   })
 
@@ -51,7 +52,7 @@ const SurveyResult: FC<Props> = ({ loadSurveyResult, saveSurveyResult }) => {
     setState(oldValue => ({ ...oldValue, isLoading: true }))
     saveSurveyResult.save({ answer })
       .then()
-      .catch()
+      .catch(handleError)
   }
 
   return (
