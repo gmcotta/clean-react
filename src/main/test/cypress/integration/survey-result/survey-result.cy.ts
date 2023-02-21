@@ -105,10 +105,22 @@ describe('SurveyResult', () => {
       'surveyResultSaveUnexpectedError'
     )
 
+    const mockAccessDeniedError = (): void => HTTPHelper.mockForbiddenError(
+      'PUT',
+      path,
+      'surveyResultSaveAccessDeniedError'
+    )
+
     it('Should present error on UnexpectedError', () => {
       mockUnexpectedError()
       cy.get('li:nth-child(2)').click()
       cy.getByTestId('error').should('contain.text', 'Aconteceu algo de errado. Tente novamente mais tarde.')
+    })
+
+    it('Should logout on AccessDeniedError', () => {
+      mockAccessDeniedError()
+      cy.get('li:nth-child(2)').click()
+      Helpers.testUrl('/login')
     })
   })
 })
