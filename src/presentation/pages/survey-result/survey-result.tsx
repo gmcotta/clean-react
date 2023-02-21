@@ -37,6 +37,7 @@ const SurveyResult: FC<Props> = ({ loadSurveyResult, saveSurveyResult }) => {
   }, [state.reload])
 
   const onAnswer = (answer: string): void => {
+    if (state.isLoading) return
     setState(oldValue => ({ ...oldValue, isLoading: true }))
     saveSurveyResult.save({ answer })
       .then(surveyResult => setState(oldValue => ({ ...oldValue, isLoading: false, surveyResult })))
