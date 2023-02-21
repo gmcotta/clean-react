@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker'
 
 import { HttpStatusCode } from '@/data/protocols/http'
 import { HttpClientSpy, mockRemoteSurveyResultModel } from '@/data/test'
-import { AccessDeniedError } from '@/domain/errors'
+import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
 import { mockSaveSurveyResultParams } from '@/domain/test'
 
 import { RemoteSaveSurveyResult } from './remote-save-survey-result'
@@ -44,5 +44,14 @@ describe('RemoteSaveSurveyResult', () => {
     }
     const promise = sut.save(mockSaveSurveyResultParams())
     await expect(promise).rejects.toThrow(new AccessDeniedError())
+  })
+
+  it('Should throw UnexpectedError if HttpGetClient returns 404', async () => {
+    const { sut, httpClientSpy } = makeSut()
+    httpClientSpy.response = {
+      statusCode: HttpStatusCode.notFound
+    }
+    const promise = sut.save(mockSaveSurveyResultParams())
+    await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 })
