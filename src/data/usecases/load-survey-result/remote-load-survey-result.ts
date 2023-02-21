@@ -14,7 +14,10 @@ export class RemoteLoadSurveyListResult {
     })
     const remoteSurveyListResult = httpResponse.body
     switch (httpResponse.statusCode) {
-      case HttpStatusCode.ok: return { ...remoteSurveyListResult, date: new Date(remoteSurveyListResult.date) }
+      case HttpStatusCode.ok: return {
+        ...remoteSurveyListResult,
+        date: new Date(remoteSurveyListResult.date)
+      }
       // case HttpStatusCode.serverError: return {
       //   question: faker.random.words(10),
       //   date: new Date(),
