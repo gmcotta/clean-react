@@ -1,4 +1,4 @@
-import React, { FC, Fragment } from 'react'
+import React, { FC } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { LoadSurveyResult } from '@/domain/usecases'
@@ -21,9 +21,7 @@ const Result: FC<Props> = ({ surveyResult }) => {
       </hgroup>
       <ul data-testid="answers" className={Styles.answerList}>
         {surveyResult.answers.map(answer => (
-          <Fragment key={answer.answer}>
-            <SurveyResultDataAnswer answer={answer} />
-          </Fragment>
+          <SurveyResultDataAnswer key={answer.answer} answer={answer} />
         ))}
       </ul>
       <button
