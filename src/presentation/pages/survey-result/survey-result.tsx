@@ -32,7 +32,7 @@ const SurveyResult: FC<Props> = ({ loadSurveyResult, saveSurveyResult }) => {
 
   useEffect(() => {
     loadSurveyResult.load()
-      .then(surveyResult => setState(oldValue => ({ ...oldValue, surveyResult })))
+      .then(surveyResult => { setState(oldValue => ({ ...oldValue, surveyResult })) })
       .catch(handleError)
   }, [state.reload])
 
@@ -40,7 +40,7 @@ const SurveyResult: FC<Props> = ({ loadSurveyResult, saveSurveyResult }) => {
     if (state.isLoading) return
     setState(oldValue => ({ ...oldValue, isLoading: true }))
     saveSurveyResult.save({ answer })
-      .then(surveyResult => setState(oldValue => ({ ...oldValue, isLoading: false, surveyResult })))
+      .then(surveyResult => { setState(oldValue => ({ ...oldValue, isLoading: false, surveyResult })) })
       .catch(handleError)
   }
 

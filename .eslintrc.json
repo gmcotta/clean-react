@@ -34,6 +34,8 @@
         "@typescript-eslint/no-namespace": "off",
         "@typescript-eslint/no-floating-promises": "off",
         "react/jsx-uses-react": "error",
-        "react/jsx-uses-vars": "error"
+        "react/jsx-uses-vars": "error",
+        "@typescript-eslint/key-spacing": "off",
+        "@typescript-eslint/consistent-type-imports": "off"
     }
 }

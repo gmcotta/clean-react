@@ -9,7 +9,7 @@ export const testUrl = (path: string): void => {
 }
 
 export const testLocalStorageItem = (key: string, value: string): void => {
-  cy.window().then(window => assert.equal(value, window.localStorage.getItem(key)))
+  cy.window().then(window => { assert.equal(value, window.localStorage.getItem(key)) })
 }
 
 export const getLocalStorageItem = (key: string): any => {

@@ -23,8 +23,8 @@ const SurveyList: FC<Props> = ({ loadSurveyList }) => {
 
   useEffect(() => {
     loadSurveyList.loadAll()
-      .then(surveys => setState(prevState => ({ ...prevState, surveys })))
-      .catch(error => handleError(error))
+      .then(surveys => { setState(prevState => ({ ...prevState, surveys })) })
+      .catch(error => { handleError(error) })
   }, [state.reload])
 
   const reload = (): void => {

@@ -5,23 +5,29 @@ import * as Helper from '../../utils/helpers'
 import * as HTTPHelper from '../../utils/http-mocks'
 
 const path = /login/
-const mockInvalidCredentialsError = (): void => HTTPHelper.mockUnauthorizedError(
-  path,
-  'loginInvalidCredentials'
-)
+const mockInvalidCredentialsError = (): void => {
+  HTTPHelper.mockUnauthorizedError(
+    path,
+    'loginInvalidCredentials'
+  )
+}
 
-const mockUnexpectedError = (): void => HTTPHelper.mockServerError(
-  'POST',
-  path,
-  'loginUnexpectedError'
-)
+const mockUnexpectedError = (): void => {
+  HTTPHelper.mockServerError(
+    'POST',
+    path,
+    'loginUnexpectedError'
+  )
+}
 
-const mockSuccess = (account?: any): void => HTTPHelper.mockOK(
-  'POST',
-  path,
-  account || {},
-  'loginSuccess'
-)
+const mockSuccess = (account?: any): void => {
+  HTTPHelper.mockOK(
+    'POST',
+    path,
+    account || {},
+    'loginSuccess'
+  )
+}
 
 const populateForm = (): void => {
   cy.getByName('email').focus().type(faker.internet.email())
