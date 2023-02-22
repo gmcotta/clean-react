@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import { useRecoilState } from 'recoil'
+import { useRecoilValue } from 'recoil'
 
 import { SubmitButtonBase } from '@/presentation/components'
 import { loginState } from '@/presentation/pages/login/store'
@@ -9,7 +9,7 @@ type Props = {
 }
 
 const SubmitButton: FC<Props> = ({ children }) => {
-  const [state] = useRecoilState(loginState)
+  const state = useRecoilValue(loginState)
   return (
     <SubmitButtonBase state={state}>{children}</SubmitButtonBase>
   )
