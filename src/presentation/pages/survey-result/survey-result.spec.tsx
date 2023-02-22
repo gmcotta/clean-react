@@ -2,6 +2,7 @@ import React from 'react'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory, MemoryHistory } from '@remix-run/router'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { RecoilRoot } from 'recoil'
 
 import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
 import { AccountModel } from '@/domain/models'
@@ -37,17 +38,19 @@ const makeSut = ({
   })
   const setCurrentAccountMock = jest.fn()
   render(
-    <APIContext.Provider value={{
-      setCurrentAccount: setCurrentAccountMock,
-      getCurrentAccount: () => mockAccountModel()
-    }}>
-      <Router location={history.location} navigator={history}>
-        <SurveyResult
-          loadSurveyResult={loadSurveyResultSpy}
-          saveSurveyResult={saveSurveyResultSpy}
-        />|
-      </Router>
-    </APIContext.Provider>
+    <RecoilRoot>
+      <APIContext.Provider value={{
+        setCurrentAccount: setCurrentAccountMock,
+        getCurrentAccount: () => mockAccountModel()
+      }}>
+        <Router location={history.location} navigator={history}>
+          <SurveyResult
+            loadSurveyResult={loadSurveyResultSpy}
+            saveSurveyResult={saveSurveyResultSpy}
+          />|
+        </Router>
+      </APIContext.Provider>
+    </RecoilRoot>
   )
   return {
     loadSurveyResultSpy,
@@ -235,17 +238,13 @@ describe('SurveyResult', () => {
   })
 
   it('Should prevent multiple answer click', async () => {
-    const saveSurveyResultSpy = new SaveSurveyResultSpy()
-    makeSut({ saveSurveyResultSpy })
-
-    await waitFor(() => {
-      const answersWrapper = screen.queryAllByTestId('answer-wrapper')
-      fireEvent.click(answersWrapper[1])
-      fireEvent.click(answersWrapper[1])
-    })
-
-    await waitFor(() => {
-      expect(saveSurveyResultSpy.callsCount).toBe(1)
-    })
+    const { saveSurveyResultSpy } = makeSut()
+    await waitFor(() => screen.getByTestId('survey-result'))
+    const answersWrapper = screen.queryAllByTestId('answer-wrapper')
+    fireEvent.click(answersWrapper[1])
+    await waitFor(() => screen.getByTestId('survey-result'))
+    fireEvent.click(answersWrapper[1])
+    await waitFor(() => screen.getByTestId('survey-result'))
+    expect(saveSurveyResultSpy.callsCount).toBe(1)
   })
 })
