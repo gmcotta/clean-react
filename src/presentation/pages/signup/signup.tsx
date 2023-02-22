@@ -1,6 +1,6 @@
 import React, { FC, FormEvent, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil'
 
 import { AddAccount } from '@/domain/usecases'
 import { Footer, LoginHeader } from '@/presentation/components'
@@ -17,11 +17,16 @@ type SignupProps = {
 }
 
 const Signup: FC<SignupProps> = ({ validation, addAccount }) => {
+  const resetSignupState = useResetRecoilState(signupState)
   const { setCurrentAccount } = useRecoilValue(currentAccountState)
 
   const navigate = useNavigate()
 
   const [state, setState] = useRecoilState(signupState)
+
+  useEffect(() => {
+    resetSignupState()
+  }, [])
 
   useEffect(() => {
     validate('name')
@@ -81,7 +86,7 @@ const Signup: FC<SignupProps> = ({ validation, addAccount }) => {
         <Input type="password" name="password" placeholder='Digite sua senha' />
         <Input type="password" name="passwordConfirmation" placeholder='Confirme sua senha' />
         <SubmitButton>Cadastrar</SubmitButton>
-        <Link to="/login" className={Styles.link}>Voltar para Login</Link>
+        <Link to="/login" data-testid="login-link" className={Styles.link}>Voltar para Login</Link>
         <FormStatus />
       </form>
       <Footer />
