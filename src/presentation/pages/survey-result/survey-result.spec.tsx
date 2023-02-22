@@ -138,8 +138,7 @@ describe('SurveyResult', () => {
     await waitFor(() => screen.getByRole('heading'))
   })
 
-  // TODO: Refatorar o código de prod, pois de vez em quando quebra o teste
-  it.skip('Should go to SurveyList when back button is clicked', async () => {
+  it('Should go to SurveyList when back button is clicked', async () => {
     const { history } = makeSut()
     await waitFor(() => {
       fireEvent.click(screen.getByTestId('back-button'))

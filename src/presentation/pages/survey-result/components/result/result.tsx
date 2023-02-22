@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { LoadSurveyResult } from '@/domain/usecases'
@@ -12,6 +12,13 @@ type Props = {
 
 const Result: FC<Props> = ({ surveyResult }) => {
   const navigate = useNavigate()
+  const [buttonClicked, setButtonClicked] = useState(false)
+
+  useEffect(() => {
+    if (!buttonClicked) return
+    setButtonClicked(false)
+    navigate('/')
+  }, [buttonClicked])
 
   return (
     <>
@@ -27,7 +34,7 @@ const Result: FC<Props> = ({ surveyResult }) => {
       <button
         className={Styles.button}
         data-testid="back-button"
-        onClick={() => navigate('/')}
+        onClick={() => setButtonClicked(true)}
       >
         Voltar
       </button>
