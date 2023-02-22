@@ -13,15 +13,18 @@ import {
   makeSurveyResult as MakeSurveyResult
 } from '@/main/factories/pages'
 import { PrivateRoute } from '@/presentation/components'
-import { APIContext } from '@/presentation/contexts'
+import { currentAccountState } from '@/presentation/store'
+
+const initialState = {
+  setCurrentAccount: setCurrentAccountAdapter,
+  getCurrentAccount: getCurrentAccountAdapter
+}
 
 const Router: FC = () => {
   return (
-    <RecoilRoot>
-      <APIContext.Provider value={{
-        setCurrentAccount: setCurrentAccountAdapter,
-        getCurrentAccount: getCurrentAccountAdapter
-      }}>
+    <RecoilRoot initializeState={({ set }) => {
+      set(currentAccountState, initialState)
+    }}>
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<MakeLogin />} />
@@ -44,7 +47,6 @@ const Router: FC = () => {
             />
           </Routes>
         </BrowserRouter>
-      </APIContext.Provider>
     </RecoilRoot>
   )
 }

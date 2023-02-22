@@ -6,13 +6,13 @@ import { RecoilRoot } from 'recoil'
 
 import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
 import { AccountModel } from '@/domain/models'
-import { APIContext } from '@/presentation/contexts'
 import {
   LoadSurveyResultSpy,
   mockAccountModel,
   mockSurveyResultModel,
   SaveSurveyResultSpy
 } from '@/domain/test'
+import { currentAccountState } from '@/presentation/store'
 
 import SurveyResult from './survey-result'
 
@@ -37,19 +37,20 @@ const makeSut = ({
     initialIndex: 1
   })
   const setCurrentAccountMock = jest.fn()
+  const mockedState = {
+    setCurrentAccount: setCurrentAccountMock,
+    getCurrentAccount: () => mockAccountModel()
+  }
   render(
-    <RecoilRoot>
-      <APIContext.Provider value={{
-        setCurrentAccount: setCurrentAccountMock,
-        getCurrentAccount: () => mockAccountModel()
-      }}>
-        <Router location={history.location} navigator={history}>
-          <SurveyResult
-            loadSurveyResult={loadSurveyResultSpy}
-            saveSurveyResult={saveSurveyResultSpy}
-          />|
-        </Router>
-      </APIContext.Provider>
+    <RecoilRoot initializeState={({ set }) => {
+      set(currentAccountState, mockedState)
+    }}>
+      <Router location={history.location} navigator={history}>
+        <SurveyResult
+          loadSurveyResult={loadSurveyResultSpy}
+          saveSurveyResult={saveSurveyResultSpy}
+        />|
+      </Router>
     </RecoilRoot>
   )
   return {

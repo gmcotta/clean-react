@@ -1,13 +1,13 @@
-import React, { FC, FormEvent, useContext, useEffect } from 'react'
+import React, { FC, FormEvent, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue } from 'recoil'
 
 import { AddAccount } from '@/domain/usecases'
 import { Footer, LoginHeader } from '@/presentation/components'
-import { APIContext } from '@/presentation/contexts'
 import { FormStatus, Input, SubmitButton } from '@/presentation/pages/signup/components'
 import { signupState } from '@/presentation/pages/signup/store'
 import { Validation } from '@/presentation/protocols/validation'
+import { currentAccountState } from '@/presentation/store'
 
 import Styles from './signup-styles.scss'
 
@@ -17,7 +17,7 @@ type SignupProps = {
 }
 
 const Signup: FC<SignupProps> = ({ validation, addAccount }) => {
-  const { setCurrentAccount } = useContext(APIContext)
+  const { setCurrentAccount } = useRecoilValue(currentAccountState)
 
   const navigate = useNavigate()
 

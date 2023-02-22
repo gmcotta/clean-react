@@ -8,7 +8,7 @@ import { RecoilRoot } from 'recoil'
 import { InvalidCredentialsError } from '@/domain/errors'
 import { Authentication } from '@/domain/usecases'
 import { AuthenticationSpy } from '@/domain/test'
-import { APIContext } from '@/presentation/contexts'
+import { currentAccountState } from '@/presentation/store'
 import { ValidationStub, FormHelper } from '@/presentation/test'
 import Login from './login'
 
@@ -28,17 +28,21 @@ const makeSut = (params?: SutParams): SutTypes => {
   validationStub.errorMessage = params?.errorMessage
   const authenticationSpy = new AuthenticationSpy()
   const setCurrentAccountMock = jest.fn()
+  const mockedState = {
+    getCurrentAccount: jest.fn(),
+    setCurrentAccount: setCurrentAccountMock
+  }
 
   render(
-      <RecoilRoot>
-        <APIContext.Provider value={{ setCurrentAccount: setCurrentAccountMock }}>
+      <RecoilRoot initializeState={({ set }) => {
+        set(currentAccountState, mockedState)
+      }}>
           <Router location={history.location} navigator={history}>
             <Login
               validation={validationStub}
               authentication={authenticationSpy}
               />
           </Router>
-        </APIContext.Provider>
       </RecoilRoot>
   )
   return {
