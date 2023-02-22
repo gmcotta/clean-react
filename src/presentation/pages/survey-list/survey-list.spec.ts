@@ -1,12 +1,11 @@
-import React from 'react'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { Router } from 'react-router-dom'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { createMemoryHistory, MemoryHistory } from '@remix-run/router'
 
 import { AccountModel } from '@/domain/models'
-import { LoadSurveyListSpy, mockAccountModel } from '@/domain/test'
+import { LoadSurveyListSpy } from '@/domain/test'
 import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
-import { APIContext } from '@/presentation/contexts'
+import { renderWithHistory } from '@/presentation/test'
+
 import SurveyList from './survey-list'
 
 type SutTypes = {
@@ -17,17 +16,11 @@ type SutTypes = {
 
 const makeSut = (loadSurveyListSpy = new LoadSurveyListSpy()): SutTypes => {
   const history = createMemoryHistory({ initialEntries: ['/'] })
-  const setCurrentAccountMock = jest.fn()
-  render(
-    <APIContext.Provider value={{
-      setCurrentAccount: setCurrentAccountMock,
-      getCurrentAccount: () => mockAccountModel()
-    }}>
-      <Router location={history.location} navigator={history}>
-        <SurveyList loadSurveyList={loadSurveyListSpy} />
-      </Router>
-    </APIContext.Provider>
-  )
+
+  const { setCurrentAccountMock } = renderWithHistory({
+    history,
+    Page: () => SurveyList({ loadSurveyList: loadSurveyListSpy })
+  })
   return { loadSurveyListSpy, history, setCurrentAccountMock }
 }
 

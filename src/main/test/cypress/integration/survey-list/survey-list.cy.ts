@@ -2,24 +2,30 @@ import * as Helpers from '../../utils/helpers'
 import * as HTTPHelper from '../../utils/http-mocks'
 
 const path = /surveys/
-const mockUnexpectedError = (): void => HTTPHelper.mockServerError(
-  'GET',
-  path,
-  'surveyListUnexpectedError'
-)
+const mockUnexpectedError = (): void => {
+  HTTPHelper.mockServerError(
+    'GET',
+    path,
+    'surveyListUnexpectedError'
+  )
+}
 
-const mockAccessDeniedError = (): void => HTTPHelper.mockForbiddenError(
-  'GET',
-  path,
-  'surveyListAccessDeniedError'
-)
+const mockAccessDeniedError = (): void => {
+  HTTPHelper.mockForbiddenError(
+    'GET',
+    path,
+    'surveyListAccessDeniedError'
+  )
+}
 
-const mockSuccess = (surveyList?: any): void => HTTPHelper.mockOK(
-  'GET',
-  path,
-  surveyList || [],
-  'surveyListAccessSuccess'
-)
+const mockSuccess = (surveyList?: any): void => {
+  HTTPHelper.mockOK(
+    'GET',
+    path,
+    surveyList || [],
+    'surveyListAccessSuccess'
+  )
+}
 
 describe('SurveyList', () => {
   beforeEach(() => {

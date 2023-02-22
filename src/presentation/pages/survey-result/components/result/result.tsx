@@ -34,7 +34,7 @@ const Result: FC<Props> = ({ surveyResult }) => {
       <button
         className={Styles.button}
         data-testid="back-button"
-        onClick={() => setButtonClicked(true)}
+        onClick={() => { setButtonClicked(true) }}
       >
         Voltar
       </button>

@@ -5,24 +5,30 @@ import * as Helper from '../../utils/helpers'
 import * as HTTPHelper from '../../utils/http-mocks'
 
 const path = /signup/
-const mockEmailInUseError = (): void => HTTPHelper.mockForbiddenError(
-  'POST',
-  path,
-  'signupEmailInUse'
-)
+const mockEmailInUseError = (): void => {
+  HTTPHelper.mockForbiddenError(
+    'POST',
+    path,
+    'signupEmailInUse'
+  )
+}
 
-const mockSuccess = (account?: any): void => HTTPHelper.mockOK(
-  'POST',
-  path,
-  account || {},
-  'signupSuccess'
-)
+const mockSuccess = (account?: any): void => {
+  HTTPHelper.mockOK(
+    'POST',
+    path,
+    account || {},
+    'signupSuccess'
+  )
+}
 
-const mockUnexpectedError = (): void => HTTPHelper.mockServerError(
-  'POST',
-  path,
-  'signupUnexpectedError'
-)
+const mockUnexpectedError = (): void => {
+  HTTPHelper.mockServerError(
+    'POST',
+    path,
+    'signupUnexpectedError'
+  )
+}
 
 const populateForm = (): void => {
   cy.getByName('name').focus().type(faker.name.fullName())
@@ -58,6 +64,14 @@ describe('Signup', () => {
     cy.get('button[type="submit"]').should('be.disabled').should('have.text', 'Cadastrar')
 
     cy.getByAriaLabel('form-status').children().should('have.length', 0)
+  })
+
+  it('Should reset state on page load', () => {
+    cy.getByName('email').focus().type(faker.internet.email())
+    FormHelper.testInputStatus('email')
+    cy.get('a[href="/login"]').click()
+    cy.get('a[href="/signup"]').click()
+    FormHelper.testInputStatus('email', 'Campo obrigatório')
   })
 
   it('Should show error state if form is invalid', () => {

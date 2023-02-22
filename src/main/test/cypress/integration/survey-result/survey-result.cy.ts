@@ -3,12 +3,14 @@ import * as HTTPHelper from '../../utils/http-mocks'
 
 const path = /surveys\/any_id\/results/
 
-const mockLoadSuccess = (surveyResult?: any): void => HTTPHelper.mockOK(
-  'GET',
-  path,
-  surveyResult || {},
-  'surveyResultAccessSuccess'
-)
+const mockLoadSuccess = (surveyResult?: any): void => {
+  HTTPHelper.mockOK(
+    'GET',
+    path,
+    surveyResult || {},
+    'surveyResultAccessSuccess'
+  )
+}
 
 describe('SurveyResult', () => {
   describe('load', () => {
@@ -18,17 +20,21 @@ describe('SurveyResult', () => {
       })
     })
 
-    const mockUnexpectedError = (): void => HTTPHelper.mockServerError(
-      'GET',
-      path,
-      'surveyResultUnexpectedError'
-    )
+    const mockUnexpectedError = (): void => {
+      HTTPHelper.mockServerError(
+        'GET',
+        path,
+        'surveyResultUnexpectedError'
+      )
+    }
 
-    const mockAccessDeniedError = (): void => HTTPHelper.mockForbiddenError(
-      'GET',
-      path,
-      'surveyResultAccessDeniedError'
-    )
+    const mockAccessDeniedError = (): void => {
+      HTTPHelper.mockForbiddenError(
+        'GET',
+        path,
+        'surveyResultAccessDeniedError'
+      )
+    }
 
     it('Should show error on UnexpectedError', () => {
       mockUnexpectedError()
@@ -99,24 +105,30 @@ describe('SurveyResult', () => {
       })
     })
 
-    const mockUnexpectedError = (): void => HTTPHelper.mockServerError(
-      'PUT',
-      path,
-      'surveyResultSaveUnexpectedError'
-    )
+    const mockUnexpectedError = (): void => {
+      HTTPHelper.mockServerError(
+        'PUT',
+        path,
+        'surveyResultSaveUnexpectedError'
+      )
+    }
 
-    const mockAccessDeniedError = (): void => HTTPHelper.mockForbiddenError(
-      'PUT',
-      path,
-      'surveyResultSaveAccessDeniedError'
-    )
+    const mockAccessDeniedError = (): void => {
+      HTTPHelper.mockForbiddenError(
+        'PUT',
+        path,
+        'surveyResultSaveAccessDeniedError'
+      )
+    }
 
-    const mockSaveSuccess = (surveyResult?: any): void => HTTPHelper.mockOK(
-      'PUT',
-      path,
-      surveyResult || {},
-      'surveyResultSaveAccessSuccess'
-    )
+    const mockSaveSuccess = (surveyResult?: any): void => {
+      HTTPHelper.mockOK(
+        'PUT',
+        path,
+        surveyResult || {},
+        'surveyResultSaveAccessSuccess'
+      )
+    }
 
     it('Should present error on UnexpectedError', () => {
       mockUnexpectedError()
