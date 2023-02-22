@@ -53,6 +53,14 @@ describe('Login', () => {
     cy.getByAriaLabel('form-status').children().should('have.length', 0)
   })
 
+  it('Should reset state on page load', () => {
+    cy.getByName('email').focus().type(faker.internet.email())
+    FormHelper.testInputStatus('email')
+    cy.get('a[href="/signup"]').click()
+    cy.get('a[href="/login"]').click()
+    FormHelper.testInputStatus('email', 'Campo obrigatório')
+  })
+
   it('Should show error state if form is invalid', () => {
     cy.getByName('email').focus().type(faker.random.word())
     FormHelper.testInputStatus('email', 'Campo inválido')
