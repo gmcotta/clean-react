@@ -1,12 +1,8 @@
 import React, { ReactElement } from 'react'
-import { Router } from 'react-router-dom'
 import { createMemoryHistory, MemoryHistory } from '@remix-run/router'
-import { render } from '@testing-library/react'
-import { RecoilRoot } from 'recoil'
 
-import { AccountModel } from '@/domain/models'
 import { mockAccountModel } from '@/domain/test'
-import { currentAccountState } from '@/presentation/store'
+import { renderWithHistory } from '@/presentation/test'
 
 import PrivateRoute from './private-route'
 
@@ -20,24 +16,17 @@ const Page = (): ReactElement => {
 
 const makeSut = (account = mockAccountModel()): SutTypes => {
   const history = createMemoryHistory({ initialEntries: ['/'] })
-  const getCurrentAccountMock = (): AccountModel => account
-  const setCurrentAccountMock = jest.fn()
-  const mockedState = {
-    getCurrentAccount: getCurrentAccountMock,
-    setCurrentAccount: setCurrentAccountMock
-  }
-  render(
-    <RecoilRoot
-      initializeState={({ set }) => {
-        set(currentAccountState, mockedState)
-      }}>
-      <Router location={history.location} navigator={history}>
-        <PrivateRoute>
+
+  renderWithHistory({
+    history,
+    account,
+    Page: () => (
+      <PrivateRoute>
           <Page />
         </PrivateRoute>
-      </Router>
-    </RecoilRoot>
-  )
+    )
+  })
+
   return {
     history
   }
