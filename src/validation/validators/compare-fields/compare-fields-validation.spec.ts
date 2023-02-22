@@ -14,7 +14,7 @@ describe('CompareFieldsValidation', () => {
     const sut = makeSut(field, fieldToCompare)
     const error = sut.validate({
       [field]: faker.random.alphaNumeric(10),
-      [fieldToCompare]: faker.random.alphaNumeric(9)
+      [fieldToCompare]: faker.random.word()
     })
     expect(error).toStrictEqual(new InvalidFieldError())
   })

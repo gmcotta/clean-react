@@ -1,19 +1,20 @@
 import { faker } from '@faker-js/faker'
 
-import { HttpClientSpy, mockRemoteSurveyResultModel } from '@/data/test'
 import { HttpStatusCode } from '@/data/protocols/http'
+import { HttpClientSpy, mockRemoteSurveyResultModel } from '@/data/test'
 import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
+import { mockSaveSurveyResultParams } from '@/domain/test'
 
-import { RemoteLoadSurveyResult } from './remote-load-survey-result'
+import { RemoteSaveSurveyResult } from './remote-save-survey-result'
 
 type SutTypes = {
-  sut: RemoteLoadSurveyResult
+  sut: RemoteSaveSurveyResult
   httpClientSpy: HttpClientSpy
 }
 
 const makeSut = (url = faker.internet.url()): SutTypes => {
   const httpClientSpy = new HttpClientSpy()
-  const sut = new RemoteLoadSurveyResult(url, httpClientSpy)
+  const sut = new RemoteSaveSurveyResult(url, httpClientSpy)
 
   return {
     sut,
@@ -21,17 +22,19 @@ const makeSut = (url = faker.internet.url()): SutTypes => {
   }
 }
 
-describe('RemoteLoadSurveyResult', () => {
-  it('Should call HttpGetClient with correct URL and method', async () => {
+describe('RemoteSaveSurveyResult', () => {
+  it('Should call HttpClient with correct URL and method', async () => {
     const url = faker.internet.url()
     const { sut, httpClientSpy } = makeSut(url)
     httpClientSpy.response = {
       statusCode: HttpStatusCode.ok,
       body: mockRemoteSurveyResultModel()
     }
-    await sut.load()
+    const saveSurveyResultParams = mockSaveSurveyResultParams()
+    await sut.save(saveSurveyResultParams)
     expect(httpClientSpy.url).toBe(url)
-    expect(httpClientSpy.method).toBe('get')
+    expect(httpClientSpy.method).toBe('put')
+    expect(httpClientSpy.body).toStrictEqual(saveSurveyResultParams)
   })
 
   it('Should throw AccessDeniedError if HttpGetClient returns 403', async () => {
@@ -39,7 +42,7 @@ describe('RemoteLoadSurveyResult', () => {
     httpClientSpy.response = {
       statusCode: HttpStatusCode.forbidden
     }
-    const promise = sut.load()
+    const promise = sut.save(mockSaveSurveyResultParams())
     await expect(promise).rejects.toThrow(new AccessDeniedError())
   })
 
@@ -48,7 +51,7 @@ describe('RemoteLoadSurveyResult', () => {
     httpClientSpy.response = {
       statusCode: HttpStatusCode.notFound
     }
-    const promise = sut.load()
+    const promise = sut.save(mockSaveSurveyResultParams())
     await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
@@ -57,11 +60,11 @@ describe('RemoteLoadSurveyResult', () => {
     httpClientSpy.response = {
       statusCode: HttpStatusCode.serverError
     }
-    const promise = sut.load()
+    const promise = sut.save(mockSaveSurveyResultParams())
     await expect(promise).rejects.toThrow(new UnexpectedError())
   })
 
-  it('Should return a SurveyResult on 200', async () => {
+  it('Should return a SurveyReturn on 200', async () => {
     const httpResult = mockRemoteSurveyResultModel()
     const { sut, httpClientSpy } = makeSut()
 
@@ -69,7 +72,7 @@ describe('RemoteLoadSurveyResult', () => {
       statusCode: HttpStatusCode.ok,
       body: httpResult
     }
-    const httpResponse = await sut.load()
+    const httpResponse = await sut.save(mockSaveSurveyResultParams())
     expect(httpResponse.answers).toHaveLength(2)
     expect(httpResponse).toStrictEqual({
       question: httpResult.question,

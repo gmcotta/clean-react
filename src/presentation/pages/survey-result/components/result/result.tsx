@@ -1,5 +1,4 @@
-import React, { FC, Fragment } from 'react'
-import FlipMove from 'react-flip-move'
+import React, { FC, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { LoadSurveyResult } from '@/domain/usecases'
@@ -13,10 +12,13 @@ type Props = {
 
 const Result: FC<Props> = ({ surveyResult }) => {
   const navigate = useNavigate()
+  const [buttonClicked, setButtonClicked] = useState(false)
 
-  const handleBack = (): void => {
-    navigate(-1)
-  }
+  useEffect(() => {
+    if (!buttonClicked) return
+    setButtonClicked(false)
+    navigate('/')
+  }, [buttonClicked])
 
   return (
     <>
@@ -24,14 +26,18 @@ const Result: FC<Props> = ({ surveyResult }) => {
         <Calendar date={surveyResult.date} className={Styles.calendarWrapper} />
         <h2 data-testid="question">{surveyResult.question}</h2>
       </hgroup>
-      <FlipMove data-testid="answers" className={Styles.answerList}>
+      <ul data-testid="answers" className={Styles.answerList}>
         {surveyResult.answers.map(answer => (
-          <Fragment key={answer.answer}>
-            <SurveyResultDataAnswer answer={answer} />
-          </Fragment>
+          <SurveyResultDataAnswer key={answer.answer} answer={answer} />
         ))}
-      </FlipMove>
-      <button className={Styles.button} data-testid="back-button" onClick={handleBack}>Voltar</button>
+      </ul>
+      <button
+        className={Styles.button}
+        data-testid="back-button"
+        onClick={() => setButtonClicked(true)}
+      >
+        Voltar
+      </button>
     </>
   )
 }

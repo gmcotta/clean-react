@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 
-import { LoadSurveyResult } from '@/domain/usecases'
+import { LoadSurveyResult, SaveSurveyResult } from '@/domain/usecases'
 
 export const mockSurveyResultModel = (): LoadSurveyResult.Model => ({
   question: faker.random.words(10),
@@ -22,10 +22,25 @@ export const mockSurveyResultModel = (): LoadSurveyResult.Model => ({
   ]
 })
 
+export const mockSaveSurveyResultParams = (): SaveSurveyResult.Params => ({
+  answer: faker.random.words(3)
+})
+
 export class LoadSurveyResultSpy implements LoadSurveyResult {
   callsCount = 0
   survey = mockSurveyResultModel()
   async load (): Promise<LoadSurveyResult.Model> {
+    this.callsCount++
+    return this.survey
+  }
+}
+
+export class SaveSurveyResultSpy implements SaveSurveyResult {
+  params: SaveSurveyResult.Params
+  survey = mockSurveyResultModel()
+  callsCount = 0
+  async save (params: SaveSurveyResult.Params): Promise<SaveSurveyResult.Model> {
+    this.params = params
     this.callsCount++
     return this.survey
   }
