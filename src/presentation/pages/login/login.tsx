@@ -1,6 +1,6 @@
 import React, { FC, FormEvent, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil'
 
 import { Authentication } from '@/domain/usecases'
 import { Footer, LoginHeader } from '@/presentation/components'
@@ -17,9 +17,14 @@ type LoginProps = {
 }
 
 const Login: FC<LoginProps> = ({ validation, authentication }) => {
+  const resetLoginState = useResetRecoilState(loginState)
   const { setCurrentAccount } = useRecoilValue(currentAccountState)
   const navigate = useNavigate()
   const [state, setState] = useRecoilState(loginState)
+
+  useEffect(() => {
+    resetLoginState()
+  }, [])
 
   useEffect(() => {
     validate('email')
