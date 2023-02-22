@@ -3,6 +3,7 @@ import { Router } from 'react-router-dom'
 import { createMemoryHistory } from '@remix-run/router'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { faker } from '@faker-js/faker'
+import { RecoilRoot } from 'recoil'
 
 import { EmailInUseError } from '@/domain/errors'
 import { AddAccount } from '@/domain/usecases'
@@ -29,14 +30,16 @@ const makeSut = (params?: SutParams): SutTypes => {
   const setCurrentAccountMock = jest.fn()
 
   render(
-    <APIContext.Provider value={{ setCurrentAccount: setCurrentAccountMock }}>
-      <Router location={history.location} navigator={history}>
-        <Signup
-          validation={validationStub}
-          addAccount={addAccountSpy}
-        />
-      </Router>
-    </APIContext.Provider>
+    <RecoilRoot>
+      <APIContext.Provider value={{ setCurrentAccount: setCurrentAccountMock }}>
+        <Router location={history.location} navigator={history}>
+          <Signup
+            validation={validationStub}
+            addAccount={addAccountSpy}
+          />
+        </Router>
+      </APIContext.Provider>
+    </RecoilRoot>
   )
 
   return {

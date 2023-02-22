@@ -1,9 +1,12 @@
-import React, { FC, FormEvent, useContext, useEffect, useState } from 'react'
+import React, { FC, FormEvent, useContext, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useRecoilState } from 'recoil'
 
 import { AddAccount } from '@/domain/usecases'
-import { Footer, FormStatus, Input, LoginHeader, SubmitButton } from '@/presentation/components'
-import { APIContext, FormContext } from '@/presentation/contexts'
+import { Footer, LoginHeader } from '@/presentation/components'
+import { APIContext } from '@/presentation/contexts'
+import { FormStatus, Input, SubmitButton } from '@/presentation/pages/signup/components'
+import { signupState } from '@/presentation/pages/signup/store'
 import { Validation } from '@/presentation/protocols/validation'
 
 import Styles from './signup-styles.scss'
@@ -18,19 +21,7 @@ const Signup: FC<SignupProps> = ({ validation, addAccount }) => {
 
   const navigate = useNavigate()
 
-  const [state, setState] = useState({
-    isLoading: false,
-    isFormInvalid: true,
-    mainError: '',
-    name: '',
-    nameError: '',
-    email: '',
-    emailError: '',
-    password: '',
-    passwordError: '',
-    passwordConfirmation: '',
-    passwordConfirmationError: 'Campo obrigatório'
-  })
+  const [state, setState] = useRecoilState(signupState)
 
   useEffect(() => {
     validate('name')
@@ -76,25 +67,23 @@ const Signup: FC<SignupProps> = ({ validation, addAccount }) => {
       setCurrentAccount(account)
       navigate('/', { replace: true })
     } catch (error) {
-      setState(prevState => ({ ...state, isLoading: false, mainError: error.message }))
+      setState(prevState => ({ ...prevState, isLoading: false, mainError: error.message }))
     }
   }
 
   return (
     <div className={Styles.signupWrapper}>
       <LoginHeader />
-      <FormContext.Provider value={{ state, setState }}>
-        <form role="form" className={Styles.form} onSubmit={handleSubmit}>
-          <h2>Criar conta</h2>
-          <Input type="text" name="name" placeholder='Digite seu nome' />
-          <Input type="email" name="email" placeholder='Digite seu e-mail' />
-          <Input type="password" name="password" placeholder='Digite sua senha' />
-          <Input type="password" name="passwordConfirmation" placeholder='Confirme sua senha' />
-          <SubmitButton>Cadastrar</SubmitButton>
-          <Link to="/login" className={Styles.link}>Voltar para Login</Link>
-          <FormStatus />
-        </form>
-      </FormContext.Provider>
+      <form role="form" className={Styles.form} onSubmit={handleSubmit}>
+        <h2>Criar conta</h2>
+        <Input type="text" name="name" placeholder='Digite seu nome' />
+        <Input type="email" name="email" placeholder='Digite seu e-mail' />
+        <Input type="password" name="password" placeholder='Digite sua senha' />
+        <Input type="password" name="passwordConfirmation" placeholder='Confirme sua senha' />
+        <SubmitButton>Cadastrar</SubmitButton>
+        <Link to="/login" className={Styles.link}>Voltar para Login</Link>
+        <FormStatus />
+      </form>
       <Footer />
     </div>
   )

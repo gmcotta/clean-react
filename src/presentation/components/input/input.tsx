@@ -1,11 +1,9 @@
-import FormContext from '@/presentation/contexts/form/form-context'
-import React, { ChangeEvent, FC, useContext } from 'react'
+import React, { ChangeEvent, FC } from 'react'
 
 import Styles from './input-styles.scss'
 import { InputProps } from './props'
 
-const Input: FC<InputProps> = (props) => {
-  const { state, setState } = useContext(FormContext)
+const Input: FC<InputProps> = ({ state, setState, ...props }) => {
   const errorMessage = state[`${props.name}Error`]
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
